@@ -8,7 +8,7 @@ export default new Router({
     {
       path: '/',
       name: 'Welcome',
-      component: require('@/components/WorkUp').default
+      component: require('@/components/dashboard/Dashboard').default
     },
     {
       path: '*',
