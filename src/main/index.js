@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -23,18 +23,21 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 800
   })
 
   mainWindow.loadURL(winURL)
+  mainWindow.setMinimumSize(800, 563)
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 
-  ipcMain.on('ping', (event, data) => {
-    console.log(data)
-    event.sender.send('pong', 'pong')
+  ipcMain.on('root-folder', (event, data) => {
+    dialog.showOpenDialog({ properties: ['promptToCreate', 'openDirectory'] }, (filePaths) => {
+      console.log('filePaths :' + filePaths)
+      event.sender.send('root-folder', filePaths)
+    })
   })
 }
 

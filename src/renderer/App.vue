@@ -1,8 +1,14 @@
 <template>
   <div class="container-fluid" id="app">
-    <!-- <w-header></w-header> -->
-    <div class="col-sm-4">.col-sm-4</div>
-    <router-view></router-view>
+    <div class="row">
+      <div class="col-md-3">
+        <left-menu></left-menu>
+      </div>
+      <div class="col-md-9">
+          <w-header ></w-header>
+          <router-view class="router-view"></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,5 +24,5 @@ export default {
 </script>
 
 <style>
-/* CSS */
+  
 </style>

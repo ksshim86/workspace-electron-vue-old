@@ -2,3 +2,24 @@ html,
 body {
   height: 100%;
 }
+
+.row {
+  height: 100%;
+}
+.container-fluid {
+  height: 100%;
+}
+
+header {
+  height: 80px;
+  background-color: rgb(49, 49, 49)
+}
+
+.router-view {
+  min-height: calc(100% - 80px);
+  height: calc(100% - 80px);
+}
+
+.router-view > div {
+  height: 100%;
+}
