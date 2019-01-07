@@ -1,4 +1,6 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import ipc from './dashboard/ipc'
+import lowdb from './dashboard/lowdb'
 
 /**
  * Set `__static` path to static files in production
@@ -17,14 +19,13 @@ const winURL =
     : `file://${__dirname}/index.html`
 
 function createWindow() {
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
     width: 800
   })
+
+  initData()
 
   mainWindow.loadURL(winURL)
   mainWindow.setMinimumSize(800, 563)
@@ -32,12 +33,16 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+}
 
-  ipcMain.on('root-folder', (event, data) => {
-    dialog.showOpenDialog({ properties: ['promptToCreate', 'openDirectory'] }, (filePaths) => {
-      console.log('filePaths :' + filePaths)
-      event.sender.send('root-folder', filePaths)
-    })
+const initData = () => {
+  mainWindow.webContents.on('did-finish-load', () => {
+    const rootPathKey = 'workspace.path'
+    let rootPath = ''
+
+    rootPath = lowdb.get(rootPathKey)
+
+    mainWindow.webContents.send('root-path', rootPath)
   })
 }
 

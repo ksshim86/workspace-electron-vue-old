@@ -19,9 +19,7 @@ Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
-
 library.add(faFolder)
-
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 /* eslint-disable no-new */
