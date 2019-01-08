@@ -1,13 +1,20 @@
 import { ipcMain, dialog } from 'electron'
 import lowdb from './lowdb'
 
-ipcMain.on('root-folder', (event, data) => {
-  dialog.showOpenDialog({ properties: ['promptToCreate', 'openDirectory'] }, filePaths => {
-    console.log('filePaths :', filePaths)
-    console.log('typeof filePaths :', typeof filePaths)
+ipcMain.on('send-workspace-path-save', (event, data) => {
+  dialog.showOpenDialog({ properties: ['promptToCreate', 'openDirectory'] }, workspacePaths => {
+    let workspacePath = ''
 
-    lowdb.setData('workspace.path', filePaths[0])
-    event.sender.send('root-folder', filePaths[0] !== undefined ? filePaths[0] : '')
+    console.log(`[debug]ipcMain > send-workspace-path-save > data={${data}}`)
+
+    if (workspacePaths !== undefined) {
+      workspacePath = workspacePaths[0]
+      lowdb.setData('workspace.path', workspacePath)
+    }
+
+    event.returnValue = workspacePath
+
+    console.log(`[debug]ipcMain > send-workspace-path-save > result={${workspacePath}}`)
   })
 })
 

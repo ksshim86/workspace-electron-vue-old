@@ -7,8 +7,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Welcome',
+      name: 'dashboard',
       component: require('@/components/dashboard/Dashboard').default
+    },
+    {
+      path: '/tutorial',
+      name: 'dashboard',
+      component: require('@/components/tutorial/TutorialPage')
     },
     {
       path: '*',

@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="wrapper">
     <div v-if="workspace.isEmpty">
-      <div class="wrapper">
+      <div class="container">
         <div class="root-folder" @click="handleFolderClicked">
           <font-awesome-icon class="fa-folder" icon="folder" size="8x" />
           <font-awesome-icon class="fa-folder-open" :icon="faFolderOpen" size="8x" />
@@ -42,12 +42,6 @@ export default {
     this.$electron.ipcRenderer.on('root-folder', (event, data) => {
       this.isStatus = !this.isStatus
       this.workspace.isEmpty = false
-    })
-
-    this.$electron.ipcRenderer.on('root-path', (event, data) => {
-      if (data === '') {
-        this.workspace.isEmpty = true
-      }
     })
   },
   methods: {

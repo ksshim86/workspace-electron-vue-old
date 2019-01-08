@@ -37,12 +37,13 @@ function createWindow() {
 
 const initData = () => {
   mainWindow.webContents.on('did-finish-load', () => {
-    const rootPathKey = 'workspace.path'
-    let rootPath = ''
+    let workspacePath = ''
 
-    rootPath = lowdb.get(rootPathKey)
+    workspacePath = lowdb.get('workspace.path')
 
-    mainWindow.webContents.send('root-path', rootPath)
+    console.log('electron) workspacePath :', workspacePath)
+
+    mainWindow.webContents.send('workspace-path', workspacePath)
   })
 }
 
