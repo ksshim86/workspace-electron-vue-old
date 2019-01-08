@@ -10,19 +10,16 @@
         @dismissed="dismissCountDown = 0"
         @dismiss-count-down="countDownChanged"
       >
+        <span class="icon-info-circled alert-icon-float-left"></span>
         Workspace가 설정되었습니다.
       </b-alert>
       <b-card class="text-center" v-if="firstStep">
         <b-card-body>
-          <h4 class="card-title">Special title treatment</h4>
+          <h4 class="card-title">Workspace 시작</h4>
           <p class="card-text">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
             has been the industry's standard dummy text ever since the 1500s, when an unknown
-            printer took a galley of type and scrambled it to make a type specimen book. It has
-            survived not only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s with the release of
-            Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-            publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            printer took a galley of type and scrambled it to make a type specimen book.
           </p>
           <a href="#" class="btn btn-primary" @click="handleNextStepClicked">시작하기</a>
         </b-card-body>
@@ -40,10 +37,34 @@
       </b-card>
       <b-card class="text-center" v-if="thirdStep">
         <b-card-body>
-          <h4 class="card-title">Workspace 설정</h4>
+          <h4 class="card-title">Workspace</h4>
           <b-nav class="d-flex justify-content-center">
-            <ol class="breadcrumb" v-html="nav"></ol>
+            <ol class="breadcrumb" v-html="navItemHtml"></ol>
           </b-nav>
+          <p class="card-text">이제부터 이 경로 하위로 폴더/파일들이 관리됩니다.</p>
+          <b-button variant="primary" @click="handleNextStepClicked">Work 만들기</b-button>
+        </b-card-body>
+      </b-card>
+      <b-card class="text-center" v-if="fourthStep">
+        <b-card-body>
+          <h4 class="card-title">Workspace</h4>
+          <b-nav class="d-flex justify-content-center">
+            <ol class="breadcrumb" v-html="navItemHtml"></ol>
+          </b-nav>
+          <p class="card-text">이제부터 이 경로 하위로 폴더/파일들이 관리됩니다.</p>
+        </b-card-body>
+      </b-card>
+      <div v-if="fourthStep" style="display: flex; height: 30px; width: 50%; border-right: 1px solid red;"></div>
+      <b-card class="text-center" v-if="fourthStep">
+        <b-card-body>
+          <h4 class="card-title">Work</h4>
+          <b-input-group prepend="Name" class="mb-3">
+            <b-form-input></b-form-input>
+          </b-input-group>
+          <b-input-group prepend="Key" class="mb-3">
+            <b-form-input></b-form-input>
+          </b-input-group>
+          <b-button variant="primary">Work 생성</b-button>
         </b-card-body>
       </b-card>
     </div>
@@ -57,7 +78,7 @@ export default {
   data() {
     return {
       step: 1,
-      nav: '',
+      navItemHtml: '',
       dismissSecs: 3,
       dismissCountDown: 0,
       showDismissibleAlert: false,
@@ -73,6 +94,9 @@ export default {
     },
     thirdStep() {
       return this.step === 3
+    },
+    fourthStep() {
+      return this.step === 4
     },
     faFolderOpen() {
       return faFolderOpen
@@ -92,19 +116,20 @@ export default {
       result = this.$electron.ipcRenderer.sendSync('send-workspace-path-save', '')
 
       if ('' !== result) {
-        // this.step++
+        this.step++
 
         this.splitPaths = this.parsingPath(result)
 
-        this.showNavByWorkspacePath(splitPaths)
+        this.showNavByWorkspacePath()
 
         this.showAlert()
       }
     },
-    showNavByWorkspacePath(splitPaths) {
-      this.nav = `<b-nav-item class="breadcrumb-item"><a href="#">C</a></b-nav-item>
-                <b-nav-item class="breadcrumb-item"><a href="#">Work</a></b-nav-item>
-                <b-nav-item class="breadcrumb-item"><a href="#"></a></b-nav-item>`
+    showNavByWorkspacePath() {
+      for (let i=0; i<this.splitPaths.length; i++) {
+        this.navItemHtml += `<b-nav-item class="breadcrumb-item"><a href="#">${this.splitPaths[i]}</a></b-nav-item>`
+      }
+
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown

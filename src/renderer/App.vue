@@ -28,6 +28,9 @@ export default {
       workspace: { isEmpty: false }
     }
   },
+  beforeMount() {
+    
+  },
   beforeCreate() {
     this.$electron.ipcRenderer.on('workspace-path', (event, data) => {
       if (data === '') {
