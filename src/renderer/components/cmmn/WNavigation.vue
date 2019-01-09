@@ -52,15 +52,29 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  props: {
-    drawer: false
-  },
   data() {
     return {
       items: [{ title: 'Home', icon: 'dashboard' }, { title: 'About', icon: 'question_answer' }],
       mini: false,
       right: null
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getDrawer'
+    ]),
+    drawer: {
+      get() {
+        console.log(`drawer get : ${this.$store.state.WNavigation.drawer}`)
+        return this.$store.state.WNavigation.drawer
+      },
+      set(val) {
+        console.log(`drawer set : ${val}`)
+        this.$store.commit('IS_DRAWER', val)
+      }
     }
   }
 }

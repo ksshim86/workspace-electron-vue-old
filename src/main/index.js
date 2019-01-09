@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron' // eslint-disable-line
 import lowdb from './tutorial/lowdb'
+// import '../renderer/store'
 
 /**
  * Set `__static` path to static files in production
