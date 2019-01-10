@@ -7,16 +7,16 @@ const getters = {
 
 const mutations = {
   IS_DRAWER(state, value) {
-    state.drawer = value === undefined ? true : value
+    console.log(`IS_DRAWER : ${value}`)
+    state.drawer = value
   }
 }
 
 const actions = {
-  IS_DRAWER: ({ commit }) => {
-    commit('IS_DRAWER')
+  IS_DRAWER: ({ commit }, payload) => {
+    commit('IS_DRAWER', payload)
   }
 }
-
 
 export default {
   name: 'WNavigation',

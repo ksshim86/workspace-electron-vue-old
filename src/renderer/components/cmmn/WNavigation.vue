@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data() {
@@ -63,19 +63,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getDrawer'
-    ]),
     drawer: {
       get() {
-        console.log(`drawer get : ${this.$store.state.WNavigation.drawer}`)
-        return this.$store.state.WNavigation.drawer
+        return this.getDrawer()
       },
       set(val) {
-        console.log(`drawer set : ${val}`)
-        this.$store.commit('IS_DRAWER', val)
+        this.IS_DRAWER(val)
       }
     }
+  },
+  methods: {
+    ...mapGetters(['getDrawer']),
+    ...mapActions(['IS_DRAWER'])
   }
 }
 </script>

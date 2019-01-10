@@ -36,8 +36,9 @@ function createWindow() {
     height: 563,
     useContentSize: true,
     width: 800
+    // frame: false
   })
-
+  debugger
   initData()
 
   mainWindow.loadURL(winURL)

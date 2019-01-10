@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-toolbar app dark dense color="dark">
-      <v-toolbar-side-icon @click="IS_DRAWER" ></v-toolbar-side-icon>
-      <v-toolbar-title>{{ getDrawer }}</v-toolbar-title>
+      <v-toolbar-side-icon @click="IS_DRAWER(true)" ></v-toolbar-side-icon>
+      <v-toolbar-title></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn icon>
@@ -21,14 +21,10 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters([
-      'getDrawer'
-    ])
+    ...mapGetters(['getDrawer'])
   },
   methods: {
-    ...mapActions([
-      'IS_DRAWER'
-    ])
+    ...mapActions(['IS_DRAWER'])
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-app>
+    <v-app id="inspire">
       <w-navigation></w-navigation>
       <w-toolbar></w-toolbar>
       <v-content>
@@ -25,5 +25,7 @@ export default {
 </script>
 
 <style>
-/* CSS */
+html {
+  overflow-y: auto;
+}
 </style>
