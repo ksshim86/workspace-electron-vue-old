@@ -4,15 +4,14 @@
       <w-navigation></w-navigation>
       <w-toolbar></w-toolbar>
       <v-content>
-        <v-container fluid>
-          <router-view></router-view>
-        </v-container>
+        <router-view></router-view>
       </v-content>
     </v-app>
   </div>
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import Cmmn from './components/cmmn'
 
 export default {
@@ -20,7 +19,12 @@ export default {
   components: {
     ...Cmmn
   },
-  methods: {}
+  methods: {},
+  mounted() {
+    ipcRenderer.on('workspace-path', (event, data) => {
+      console.log(`workspace-path: ${data}`)
+    })
+  }
 }
 </script>
 

@@ -1,12 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="mini"
-      absolute
-      dark
-      temporary
-    >
+    <v-navigation-drawer v-model="drawer" :mini-variant="mini" absolute dark temporary>
       <v-list class="pa-1">
         <v-list-tile v-if="mini" @click.stop="mini = !mini">
           <v-list-tile-action>
@@ -34,10 +28,7 @@
       <v-list class="pt-0" dense>
         <v-divider light></v-divider>
 
-        <v-list-tile
-          v-for="item in items"
-          :key="item.title"
-        >
+        <v-list-tile v-for="item in items" :key="item.title">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>

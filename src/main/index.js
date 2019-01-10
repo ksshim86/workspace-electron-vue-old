@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron' // eslint-disable-line
 import lowdb from './tutorial/lowdb'
+
 // import '../renderer/store'
 
 /**
@@ -38,7 +39,7 @@ function createWindow() {
     width: 800
     // frame: false
   })
-  debugger
+
   initData()
 
   mainWindow.loadURL(winURL)

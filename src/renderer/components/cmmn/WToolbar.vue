@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar app dark dense color="dark">
-      <v-toolbar-side-icon @click="IS_DRAWER(true)" ></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="IS_DRAWER(true)"></v-toolbar-side-icon>
       <v-toolbar-title></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">

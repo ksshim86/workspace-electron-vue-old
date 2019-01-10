@@ -20,7 +20,7 @@
       </v-stepper-content>
     </div>
   </v-stepper>
-  
+
 </template>
 
 <script>
