@@ -1,5 +1,6 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
-import lowdb from './tutorial/lowdb'
+import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
+import ipc from './tutorial/ipc' // eslint-disable-line
+import lowdb from './tutorial/lowdb' // eslint-disable-line
 
 // import '../renderer/store'
 

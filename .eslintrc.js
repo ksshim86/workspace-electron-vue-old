@@ -25,6 +25,7 @@ module.exports = {
     'comma-dangle': [2, 'never'],
     indent: ['error', 2],
     'no-underscore-dangle': 0,
+    'linebreak-style': ['error', 'windows'],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }

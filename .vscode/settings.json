@@ -14,5 +14,5 @@
   "prettier.semi": false,
   "prettier.singleQuote": true,
   "vetur.format.defaultFormatter.js": "vscode-typescript",
-  "files.eol": "\n"
+  "files.eol": "\r\n"
 }

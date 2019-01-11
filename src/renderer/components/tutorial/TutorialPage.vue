@@ -12,20 +12,21 @@
             </div>
           </v-card-title>
           <v-card-text>
-            <v-btn block color="primary" dark @click="workspaceSetting">
+            <v-btn block dark @click="workspaceSetting">
               Workspace 설정
             </v-btn>
           </v-card-text>
-
-          <!-- <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :left="x === 'left'" :multi-line="mode === 'multi-line'" :right="x === 'right'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-            {{ text }}
-            <v-btn color="pink" flat @click="snackbar = false">
-              Close
-            </v-btn>
-          </v-snackbar> -->
+          
+          
         </v-card>
       </v-flex>
     </v-layout>
+    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :left="x === 'left'" :multi-line="mode === 'multi-line'" :right="x === 'right'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
+      {{ snackbarText }}
+      <v-btn color="pink" flat @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -39,18 +40,23 @@ export default {
       y: 'bottom',
       x: 'right',
       mode: '',
-      timeout: 6000,
-      text: "Hello, I'm a snackbar"
+      timeout: 3000,
+      text: "Hello, I'm a snackbar",
+      workspacePath: ''
     }
   },
-  mounted() {
-    ipcRenderer.on('recv-workspace-path-save', (event, data) => {
-      console.log(`workspace-path: ${data}`)
-    })
+  computed: {
+    snackbarText() {
+      return 'Workspace가 설정되었습니다.'
+    }
   },
   methods: {
     workspaceSetting() {
-      ipcRenderer.send('send-workspace-path-save', 'pong')
+      this.workspacePath = ipcRenderer.sendSync('send-workspace-path-save')
+
+      this.snackbar = !this.snackbar
+
+      this.$router.push('workspace')
     }
   }
 }

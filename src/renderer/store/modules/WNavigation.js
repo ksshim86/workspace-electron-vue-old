@@ -7,7 +7,6 @@ const getters = {
 
 const mutations = {
   IS_DRAWER(state, value) {
-    console.log(`IS_DRAWER : ${value}`)
     state.drawer = value
   }
 }

@@ -4,25 +4,45 @@
       <w-navigation></w-navigation>
       <w-toolbar></w-toolbar>
       <v-content>
-        <router-view></router-view>
+        <tutorial-page v-if="workspaceIsEmpty"></tutorial-page>
+        <router-view v-else></router-view>
       </v-content>
     </v-app>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import { ipcRenderer } from 'electron'
 import Cmmn from './components/cmmn'
+import TutorialPage from './components/tutorial/TutorialPage'
 
 export default {
   name: 'workspace',
   components: {
-    ...Cmmn
+    ...Cmmn,
+    TutorialPage
   },
-  methods: {},
+  data() {
+    return {}
+  },
+  computed: {
+    workspaceIsEmpty: {
+      get() {
+        return this.getWorkspaceIsEmpty()
+      },
+      set(val) {
+        this.setWorkspaceIsEmpty(val)
+      }
+    }
+  },
+  methods: {
+    ...mapGetters(['getWorkspaceIsEmpty']),
+    ...mapActions(['setWorkspaceIsEmpty'])
+  },
   mounted() {
     ipcRenderer.on('workspace-path', (event, data) => {
-      console.log(`workspace-path: ${data}`)
+      if (data === '') this.workspaceIsEmpty = data
     })
   }
 }
