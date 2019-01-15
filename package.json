@@ -56,10 +56,12 @@
     }
   },
   "dependencies": {
+    "@mdi/font": "^3.3.92",
     "axios": "^0.18.0",
     "electron": "^2.0.4",
     "lowdb": "^1.0.0",
     "vue": "^2.5.16",
+    "vue-draggable-resizable": "^1.7.5",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuetify": "^1.4.1",

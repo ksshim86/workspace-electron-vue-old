@@ -1,35 +1,115 @@
 <template>
-  <v-stepper>
-    <v-stepper-header>
-      <v-stepper-step
-        complete
-        editable
-        step="1"
-      >
-        Select campaign settings
-      </v-stepper-step>
+    <v-layout row fill-height style="background-color: red;">
+      <v-navigation-drawer permanent :mini-variant="navigation.miniVariant" >
+        <v-toolbar class="transparent" flat>
+          <v-list>
+            <v-list-tile>
+              <v-list-tile-title class="title">
+                Workspace
+              </v-list-tile-title>
+            </v-list-tile>
+            <v-divider></v-divider>
+            <v-list-group 
+              v-for="item in items"
+              :key="item.title"
+              v-model="item.active"
+              :prepend-icon="item.action"
+              no-action
+            >
+              <v-list-tile slot="activator">
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile
+                v-for="subItem in item.items"
+                :key="subItem.title"
+              >
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
+                </v-list-tile-content>
+  
+                <v-list-tile-action>
+                  <v-icon>{{ subItem.action }}</v-icon>
+                </v-list-tile-action>
+              </v-list-tile>
+            </v-list-group>
 
-      <v-divider></v-divider>
-
-      <v-stepper-step
-        complete
-        step="2"
-      >Create an ad group</v-stepper-step>
-
-      <v-divider></v-divider>
-
-      <v-stepper-step
-        step="3"
-      >
-        
-      </v-stepper-step>
-    </v-stepper-header>
-  </v-stepper>
+          </v-list>
+        </v-toolbar>
+      </v-navigation-drawer>
+        <v-layout row wrap>
+          <v-flex sm12 md12 style="background-color: orange;"></v-flex>
+          <v-flex sm12 md4 style="background-color: gray;"></v-flex>
+          <v-flex sm12 md4 style="background-color: white;"></v-flex>
+          <v-flex sm12 md4 style="background-color: gray;"></v-flex>
+        </v-layout>
+      <!-- </v-flex> -->
+    </v-layout>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      navigation: {
+        width: 250,
+        miniVariant: false
+      },
+      items: [
+        {
+          action: 'local_activity',
+          title: 'Attractions',
+          items: [{ title: 'List Item', action: 'local_activity' }]
+        },
+        {
+          action: 'restaurant',
+          title: 'Dining',
+          active: true,
+          items: [{ title: 'Breakfast & brunch' }, { title: 'New American' }, { title: 'Sushi' }]
+        },
+        {
+          action: 'school',
+          title: 'Education',
+          items: [{ title: 'List Item' }]
+        },
+        {
+          action: 'directions_run',
+          title: 'Family',
+          items: [{ title: 'List Item' }]
+        },
+        {
+          action: 'healing',
+          title: 'Health',
+          items: [{ title: 'List Item' }]
+        },
+        {
+          action: 'content_cut',
+          title: 'Office',
+          items: [{ title: 'List Item' }]
+        },
+        {
+          action: 'local_offer',
+          title: 'Promotions',
+          items: [{ title: 'List Item' }]
+        }
+      ]
+    }
+  },
+  methods: {
+    onResize(x, y, width, height) {
+      this.x = x
+      this.y = y
+      this.width = width
+      this.height = height
+    },
+    onDrag(x, y) {
+      this.x = x
+      this.y = y
+    }
+  }
+}
 </script>
 
-<style scoped>
+<style>
 </style>
