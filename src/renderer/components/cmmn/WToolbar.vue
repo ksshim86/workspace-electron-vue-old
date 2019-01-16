@@ -1,16 +1,27 @@
 <template>
-  <div>
-    <v-toolbar app dark dense color="dark">
-      <v-toolbar-side-icon @click="IS_DRAWER(true)"></v-toolbar-side-icon>
-      <v-toolbar-title></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
-  </div>
+  <v-toolbar app dark flat prominent color="#34495e">
+    
+    <!-- <v-toolbar-side-icon ></v-toolbar-side-icon> -->
+    <v-toolbar-title>
+      <v-btn
+        v-if="responsive"
+        class="default v-btn--simple"
+        dark
+        icon
+        @click.stop="IS_DRAWER(true)"
+      >
+        <v-icon>mdi-view-list</v-icon>
+      </v-btn>
+      Workspace
+      <!-- <v-icon @click="IS_DRAWER(true)">mdi-view-list</v-icon> -->
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-items class="hidden-sm-and-down">
+      <v-btn icon>
+        <v-icon>more_vert</v-icon>
+      </v-btn>
+    </v-toolbar-items>
+  </v-toolbar>
 </template>
 
 <script>
@@ -18,13 +29,31 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data() {
-    return {}
+    return {
+      responsive: false
+    }
+  },
+  mounted() {
+    this.onResponsiveInverted()
+    window.addEventListener('resize', this.onResponsiveInverted)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResponsiveInverted)
   },
   computed: {
     ...mapGetters(['getDrawer'])
   },
   methods: {
-    ...mapActions(['IS_DRAWER'])
+    ...mapActions(['IS_DRAWER']),
+    onResponsiveInverted() {
+      if (window.innerWidth < 991) {
+        this.responsive = true
+        this.responsiveInput = false
+      } else {
+        this.responsive = false
+        this.responsiveInput = true
+      }
+    }
   }
 }
 </script>

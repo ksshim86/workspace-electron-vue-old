@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron' // eslint-disable-line
 import ipc from './tutorial/ipc' // eslint-disable-line
 import lowdb from './tutorial/lowdb' // eslint-disable-line
 
@@ -35,20 +35,24 @@ function createWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 650,
     useContentSize: true,
-    width: 800
+    width: 1264
     // frame: false
   })
 
   initData()
 
   mainWindow.loadURL(winURL)
-  mainWindow.setMinimumSize(800, 563)
+  // mainWindow.setMinimumSize(1264, 563)
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  // globalShortcut.register('CommandOrControl+X', () => {
+  //   console.log('CommandOrControl+X is pressed')
+  // })
 }
 
 app.on('ready', createWindow)

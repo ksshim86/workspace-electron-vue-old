@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <v-app id="inspire">
-      <w-navigation></w-navigation>
       <w-toolbar></w-toolbar>
       <v-content>
-        <tutorial-page v-if="workspaceIsEmpty"></tutorial-page>
-        <router-view v-else></router-view>
+        <v-container class="pa-0 ma-0" fluid fill-height>
+          <w-navigation></w-navigation>
+          <tutorial-page v-if="workspaceIsEmpty"></tutorial-page>
+          <router-view v-else></router-view>
+        </v-container>
       </v-content>
     </v-app>
   </div>
