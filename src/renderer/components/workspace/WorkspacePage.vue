@@ -1,148 +1,113 @@
 <template>
-  <v-container
-    fill-height
-    fluid
-    grid-list-xl
-  >
-    <v-layout justify-start row fill-height wrap>
-      <v-layout class="ma-2">
-        <v-card >
-          <v-card-title>TODO</v-card-title>
-          <v-divider/>
-          <v-card-text>
-            <v-treeview
-              v-model="tree"
-              :open="open"
-              :items="items"
-              activatable
-              item-key="name"
-              open-on-click
-              class="mr-5"
-            >
-              <template slot="prepend" slot-scope="{ item, open, leaf }">
-                <v-icon v-if="!item.file">
-                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-                </v-icon>
-                <v-icon v-else>
-                  {{ files[item.file] }}
-                </v-icon>
-              </template>
-            </v-treeview>
-          </v-card-text>
+  <!-- <v-flex md12 sm12 lg3 width="200" color="red" class="ma-1">
+      <v-card width="200">
+        <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name" open-on-click class="mr-5">
+          <template slot="prepend" slot-scope="{ item, open, leaf }">
+            <v-icon v-if="!item.file">
+              {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+            </v-icon>
+            <v-icon v-else>
+              {{ files[item.file] }}
+            </v-icon>
+          </template>
+        </v-treeview>
+      </v-card>
+    </v-flex> -->
+
+  <v-container fill-height fluid grid-list-xl class="pa-2">
+    <v-card class="mr-3" min-width="200" style="height: 100%;">
+      <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
+        <template slot="prepend" slot-scope="{ item, open, leaf }">
+          <v-icon v-if="!item.file">
+            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+          </v-icon>
+          <v-icon v-else>
+            {{ files[item.file] }}
+          </v-icon>
+        </template>
+      </v-treeview>
+    </v-card>
+    <v-layout wrap>
+      <v-flex md12 sm12 lg4>
+        <v-card class="mr-3 pa-1" min-width="350" style="height: 100%;">
+
+          <v-card class="ma-1" dark min-width="300">
+            <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+              <v-container fill-height fluid>
+                <v-layout fill-height>
+                  <v-flex xs12 align-end flexbox>
+                    <span class="headline">Top 10 Australian beaches</span>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-img>
+            <v-card-title>
+              <div>
+                <span class="grey--text">Number 10</span><br>
+                <span>Whitehaven Beach</span><br>
+                <span>Whitsunday Island, Whitsunday Islands</span>
+              </div>
+            </v-card-title>
+            <v-card-actions>
+              <v-btn flat color="orange">Share</v-btn>
+              <v-btn flat color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+          <v-card class="ma-1" dark min-width="300">
+            <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+              <v-container fill-height fluid>
+                <v-layout fill-height>
+                  <v-flex xs12 align-end flexbox>
+                    <span class="headline">Top 10 Australian beaches</span>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-img>
+            <v-card-title>
+              <div>
+                <span class="grey--text">Number 10</span><br>
+                <span>Whitehaven Beach</span><br>
+                <span>Whitsunday Island, Whitsunday Islands</span>
+              </div>
+            </v-card-title>
+            <v-card-actions>
+              <v-btn flat color="orange">Share</v-btn>
+              <v-btn flat color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+
         </v-card>
-      </v-layout>
-      <v-layout class="ma-2">
-        <v-card>
-          <v-card-title>TODO</v-card-title>
-          <v-divider/>
-          <v-card-text>
-            <v-treeview
-              v-model="tree"
-              :open="open"
-              :items="items"
-              activatable
-              item-key="name"
-              open-on-click
-              class="mr-5"
-            >
-              <template slot="prepend" slot-scope="{ item, open, leaf }">
-                <v-icon v-if="!item.file">
-                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-                </v-icon>
-                <v-icon v-else>
-                  {{ files[item.file] }}
-                </v-icon>
-              </template>
-            </v-treeview>
-          </v-card-text>
+      </v-flex>
+      <v-flex md12 sm12 lg4>
+        <v-card class="mr-3" style="height: 100%;" min-width="350">
+          <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
+            <template slot="prepend" slot-scope="{ item, open, leaf }">
+              <v-icon v-if="!item.file">
+                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+              </v-icon>
+              <v-icon v-else>
+                {{ files[item.file] }}
+              </v-icon>
+            </template>
+          </v-treeview>
         </v-card>
-      </v-layout>
+      </v-flex>
+      <v-flex md12 sm12 lg4>
+        <v-card class="mr-3" style="height: 100%;" min-width="350">
+          <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
+            <template slot="prepend" slot-scope="{ item, open, leaf }">
+              <v-icon v-if="!item.file">
+                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+              </v-icon>
+              <v-icon v-else>
+                {{ files[item.file] }}
+              </v-icon>
+            </template>
+          </v-treeview>
+        </v-card>
+      </v-flex>
     </v-layout>
   </v-container>
-<!--
-  <v-layout fill-height>
-    <div style="background-color: red; width: 300px;">
-      <v-navigation-drawer permanent :mini-variant="navigation.miniVariant">
-        <v-toolbar class="transparent" flat>
-          <v-list>
-            <v-list-tile>
-              <v-list-tile-title class="title">
-                Workspace
-              </v-list-tile-title>
-            </v-list-tile>
-            <v-divider></v-divider>
-            <v-list-group v-for="item in items" :key="item.title" v-model="item.active" no-action>
-              <v-list-tile slot="activator">
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile v-for="subItem in item.items" :key="subItem.title">
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list-group>
-          </v-list>
-        </v-toolbar>
-      </v-navigation-drawer>
-    </div>
-    <v-layout column style="background-color: blue; height: 100%;">
-      <v-toolbar dense></v-toolbar>
-      <v-layout row style="backgroun-color: yellow;">
-        <v-flex only-lg4 style="background-color: gray;">
-        </v-flex>
-        <v-flex only-lg4 style="background-color: white;">
-        </v-flex>
-        <v-flex only-lg4 style="background-color: gray;">
-        </v-flex>
-      </v-layout>
-    </v-layout>
-  </v-layout>
-  -->
-<!--   
-  <v-layout row fill-height style="background-color: red;">
-    <v-navigation-drawer permanent :mini-variant="navigation.miniVariant">
-      <v-toolbar class="transparent" flat>
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-title class="title">
-              Workspace
-            </v-list-tile-title>
-          </v-list-tile>
-          <v-divider></v-divider>
-          <v-list-group v-for="item in items" :key="item.title" v-model="item.active" :prepend-icon="item.action" no-action>
-            <v-list-tile slot="activator">
-              <v-list-tile-content>
-                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile v-for="subItem in item.items" :key="subItem.title">
-              <v-list-tile-content>
-                <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
-              </v-list-tile-content>
-
-              <v-list-tile-action>
-                <v-icon>{{ subItem.action }}</v-icon>
-              </v-list-tile-action>
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-      </v-toolbar>
-    </v-navigation-drawer>
-    <v-layout column style="background-color: green;">
-      <v-toolbar></v-toolbar>
-      <v-layout row wrap style="backgroun-color: yellow;">
-        <v-flex lg4 style="background-color: gray;">
-        </v-flex>
-        <v-flex lg4 style="background-color: white;">
-        </v-flex>
-        <v-flex lg4 style="background-color: gray;">
-        </v-flex>
-      </v-layout>
-    </v-layout>
-  </v-layout>
-   -->
 </template>
 
 <script>
@@ -152,52 +117,6 @@ export default {
   components: {
     ...Cmmn
   },
-  // data() {
-  //   return {
-  //     navigation: {
-  //       width: 250,
-  //       miniVariant: false
-  //     },
-  //     items: [
-  //       {
-  //         action: 'local_activity',
-  //         title: 'Attractions',
-  //         items: [{ title: 'List Item', action: 'local_activity' }]
-  //       },
-  //       {
-  //         action: 'restaurant',
-  //         title: 'Dining',
-  //         active: true,
-  //         items: [{ title: 'Breakfast & brunch' }, { title: 'New American' }, { title: 'Sushi' }]
-  //       },
-  //       {
-  //         action: 'school',
-  //         title: 'Education',
-  //         items: [{ title: 'List Item' }]
-  //       },
-  //       {
-  //         action: 'directions_run',
-  //         title: 'Family',
-  //         items: [{ title: 'List Item' }]
-  //       },
-  //       {
-  //         action: 'healing',
-  //         title: 'Health',
-  //         items: [{ title: 'List Item' }]
-  //       },
-  //       {
-  //         action: 'content_cut',
-  //         title: 'Office',
-  //         items: [{ title: 'List Item' }]
-  //       },
-  //       {
-  //         action: 'local_offer',
-  //         title: 'Promotions',
-  //         items: [{ title: 'List Item' }]
-  //       }
-  //     ]
-  //   }
-  // },
   data: () => ({
     open: ['public'],
     files: {
