@@ -1,16 +1,18 @@
 <template>
-  <div id="app">
-    <v-app id="inspire">
-      <w-toolbar></w-toolbar>
-      <v-content>
-        <v-container class="pa-0 ma-0" fluid fill-height>
-          <w-navigation></w-navigation>
-          <tutorial-page v-if="workspaceIsEmpty"></tutorial-page>
-          <router-view v-else></router-view>
-        </v-container>
-      </v-content>
-    </v-app>
-  </div>
+  <v-app>
+    <v-system-bar dark app />
+    <w-navigation />
+    <w-toolbar />
+    <w-view />
+  </v-app>
+
+  <!-- <v-content>
+    <v-container class="pa-0 ma-0" fluid fill-height grid-list-xl>
+      <w-navigation></w-navigation>
+      <tutorial-page v-if="workspaceIsEmpty"></tutorial-page>
+      <router-view v-else style="background-color:red;"></router-view>
+    </v-container>
+  </v-content> -->
 </template>
 
 <script>

@@ -1,10 +1,9 @@
 <template>
-  <v-toolbar app dark flat prominent color="#34495e">
+  <v-toolbar app dark flat clipped-left fixed prominent color="#34495e">
     
     <!-- <v-toolbar-side-icon ></v-toolbar-side-icon> -->
     <v-toolbar-title>
       <v-btn
-        v-if="responsive"
         class="default v-btn--simple"
         dark
         icon
@@ -12,8 +11,6 @@
       >
         <v-icon>mdi-view-list</v-icon>
       </v-btn>
-      Workspace
-      <!-- <v-icon @click="IS_DRAWER(true)">mdi-view-list</v-icon> -->
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="hidden-sm-and-down">

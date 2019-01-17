@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+
 const winURL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:9080'
@@ -40,6 +41,8 @@ function createWindow() {
     width: 1264
     // frame: false
   })
+
+  mainWindow.setMenu(null)
 
   initData()
 
