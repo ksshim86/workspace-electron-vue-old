@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-system-bar dark app />
+    <v-system-bar dark app style="-webkit-app-region: drag" />
     <w-navigation />
     <w-toolbar />
     <w-view />
@@ -54,6 +54,10 @@ export default {
 
 <style>
 html {
-  overflow-y: auto;
+  overflow-y: hidden;
+}
+.v-content__wrap {
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 </style>

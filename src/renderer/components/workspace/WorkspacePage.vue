@@ -28,10 +28,69 @@
       </v-treeview>
     </v-card>
     <v-layout wrap>
-      <v-flex md12 sm12 lg4>
-        <v-card class="mr-3 pa-1" min-width="350" style="height: 100%;">
-
-          <v-card class="ma-1" dark min-width="300">
+      <v-flex md12 sm12 lg4 class="pt-0">
+        <v-card translate>
+          <v-card color="#27ae60" dark class="mb-1">
+            <v-card-title class="title font-weight-medium">
+              <v-icon class="mr-2">mdi-card-outline</v-icon>
+              TO DO
+            </v-card-title>
+          </v-card>
+          <v-divider></v-divider>
+          <v-card class="my-2">
+            <v-card-title class="py-1">
+              <span class="grey--text">VueJS</span>
+              <v-divider class="mx-1 white" vertical />
+              <span class="font-weight-black">WS-1</span>
+              <v-spacer />
+              <span>09.01.18</span>
+              <!-- <v-spacer /> -->
+              <!-- <v-btn icon>
+                <v-icon>mdi-trash-can-outline</v-icon>
+              </v-btn> -->
+            </v-card-title>
+            <v-card-title class="py-1">
+              <span class="text-truncate">Workspace layout 작업</span>
+            </v-card-title>
+            <v-divider/>
+            <v-card-actions>
+              <v-btn flat color="orange">Share</v-btn>
+              <v-btn flat color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+          
+          <v-card class="my-2">
+            <v-card-title class="py-1">
+              <span class="grey--text">VueJS</span>
+              <v-divider class="mx-1 white" vertical />
+              <span class="font-weight-black">WS-2</span>
+              <v-spacer />
+              <span>09.01.20</span>
+              <!-- <v-spacer /> -->
+              <!-- <v-btn icon>
+                <v-icon>mdi-trash-can-outline</v-icon>
+              </v-btn> -->
+            </v-card-title>
+            <v-card-title class="py-1">
+              <span class="text-truncate">Work 등록 개발</span>
+            </v-card-title>
+            <v-divider/>
+            <v-card-actions>
+              <v-btn flat color="orange">Share</v-btn>
+              <v-btn flat color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-card>
+      </v-flex>
+      <v-flex md12 sm12 lg4 class="pt-0">
+        <v-card>
+          <v-card color="#e74c3c" dark class="mb-1">
+            <v-card-title class="title font-weight-medium">
+              <v-icon class="mr-2">mdi-progress-check</v-icon>
+              PROGRESS
+            </v-card-title>
+          </v-card>
+          <v-card dark>
             <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
               <v-container fill-height fluid>
                 <v-layout fill-height>
@@ -53,7 +112,17 @@
               <v-btn flat color="orange">Explore</v-btn>
             </v-card-actions>
           </v-card>
-          <v-card class="ma-1" dark min-width="300">
+        </v-card>
+      </v-flex>
+      <v-flex md12 sm12 lg4 class="pt-0">
+        <v-card>
+          <v-card color="#3498db" dark class="mb-1">
+            <v-card-title class="title font-weight-medium">
+              <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
+              COMPLETE
+            </v-card-title>
+          </v-card>
+          <v-card dark>
             <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
               <v-container fill-height fluid>
                 <v-layout fill-height>
@@ -75,35 +144,6 @@
               <v-btn flat color="orange">Explore</v-btn>
             </v-card-actions>
           </v-card>
-
-        </v-card>
-      </v-flex>
-      <v-flex md12 sm12 lg4>
-        <v-card class="mr-3" style="height: 100%;" min-width="350">
-          <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
-            <template slot="prepend" slot-scope="{ item, open, leaf }">
-              <v-icon v-if="!item.file">
-                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-              </v-icon>
-              <v-icon v-else>
-                {{ files[item.file] }}
-              </v-icon>
-            </template>
-          </v-treeview>
-        </v-card>
-      </v-flex>
-      <v-flex md12 sm12 lg4>
-        <v-card class="mr-3" style="height: 100%;" min-width="350">
-          <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
-            <template slot="prepend" slot-scope="{ item, open, leaf }">
-              <v-icon v-if="!item.file">
-                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-              </v-icon>
-              <v-icon v-else>
-                {{ files[item.file] }}
-              </v-icon>
-            </template>
-          </v-treeview>
         </v-card>
       </v-flex>
     </v-layout>
@@ -182,6 +222,23 @@ export default {
       {
         name: 'yarn.lock',
         file: 'txt'
+      }
+    ],
+    bread: [
+      {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'breadcrumbs_dashboard'
+      },
+      {
+        text: 'Link 1',
+        disabled: false,
+        href: 'breadcrumbs_link_1'
+      },
+      {
+        text: 'Link 2',
+        disabled: true,
+        href: 'breadcrumbs_link_2'
       }
     ]
   }),
