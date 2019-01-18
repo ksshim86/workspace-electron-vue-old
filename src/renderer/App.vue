@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <v-system-bar dark app style="-webkit-app-region: drag" />
+    <v-system-bar dark app class="frame-bar">
+      <v-spacer></v-spacer>
+      <v-icon>remove</v-icon>
+      <v-icon>check_box_outline_blank</v-icon>
+      <v-icon>close</v-icon>
+    </v-system-bar>
     <w-navigation />
     <w-toolbar />
     <w-view />
@@ -55,9 +60,5 @@ export default {
 <style>
 html {
   overflow-y: hidden;
-}
-.v-content__wrap {
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 </style>

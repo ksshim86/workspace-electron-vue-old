@@ -27,7 +27,7 @@
         </template>
       </v-treeview>
     </v-card>
-    <v-layout wrap>
+    <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 class="pt-0">
         <v-card translate>
           <v-card color="#27ae60" dark class="mb-1">
@@ -58,7 +58,7 @@
               <v-btn flat color="orange">Explore</v-btn>
             </v-card-actions>
           </v-card>
-          
+
           <v-card class="my-2">
             <v-card-title class="py-1">
               <span class="grey--text">VueJS</span>
@@ -261,4 +261,34 @@ export default {
 </script>
 
 <style>
+.wtest {
+  position: absolute;
+  top: 9px;
+  left: 219px;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+::-webkit-scrollbar {
+  width: 8px; /* 1px wider than Lion. */
+  /* This is more usable for users trying to click it. */
+  background-color: rgba(0, 0, 0, 0);
+  -webkit-border-radius: 100px;
+}
+/* hover effect for both scrollbar area, and scrollbar 'thumb' */
+::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+
+/* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
+::-webkit-scrollbar-thumb:vertical {
+  /* This is the EXACT color of Mac OS scrollbars. 
+     Yes, I pulled out digital color meter */
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(0, 0, 0, 0.61); /* Some darker color when you click it */
+  -webkit-border-radius: 100px;
+}
 </style>
