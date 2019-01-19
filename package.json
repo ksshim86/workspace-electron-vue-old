@@ -64,6 +64,7 @@
     "vue-draggable-resizable": "^1.7.5",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
+    "vuedraggable": "^2.17.0",
     "vuetify": "^1.4.1",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0"

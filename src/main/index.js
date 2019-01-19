@@ -39,7 +39,8 @@ function createWindow() {
     height: 650,
     useContentSize: true,
     width: 1264,
-    frame: false
+    frame: true,
+    show: false
   })
 
   mainWindow.setMenu(null)
@@ -52,6 +53,20 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  // const child = new BrowserWindow({
+  //   parent: mainWindow,
+  //   modal: true,
+  //   show: false
+  // })
+  // child.loadURL('https://github.com')
+  // child.once('ready-to-show', () => {
+  //   child.show()
+  // })
 
   // globalShortcut.register('CommandOrControl+X', () => {
   //   console.log('CommandOrControl+X is pressed')

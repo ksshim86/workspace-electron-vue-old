@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <v-system-bar dark app class="frame-bar">
+    <!-- <v-system-bar dark app class="frame-bar">
       <v-spacer></v-spacer>
       <v-icon>remove</v-icon>
       <v-icon>check_box_outline_blank</v-icon>
       <v-icon>close</v-icon>
-    </v-system-bar>
+    </v-system-bar> -->
     <w-navigation />
     <w-toolbar />
     <w-view />
@@ -60,5 +60,9 @@ export default {
 <style>
 html {
   overflow-y: hidden;
+  /* -webkit-app-region: no-drag; */
+}
+.frame-bar {
+  /* -webkit-app-region: drag; */
 }
 </style>

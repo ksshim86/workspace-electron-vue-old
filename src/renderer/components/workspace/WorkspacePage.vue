@@ -14,7 +14,7 @@
       </v-card>
     </v-flex> -->
 
-  <v-container fill-height fluid grid-list-xl class="pa-2">
+  <v-container fill-height fluid grid-list-xl class="pa-0">
     <v-card class="mr-3" min-width="200" style="height: 100%;">
       <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
         <template slot="prepend" slot-scope="{ item, open, leaf }">
@@ -29,121 +29,107 @@
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 class="pt-0">
-        <v-card translate>
-          <v-card color="#27ae60" dark class="mb-1">
-            <v-card-title class="title font-weight-medium">
-              <v-icon class="mr-2">mdi-card-outline</v-icon>
-              TO DO
-            </v-card-title>
-          </v-card>
-          <v-divider></v-divider>
-          <v-card class="my-2">
-            <v-card-title class="py-1">
-              <span class="grey--text">VueJS</span>
-              <v-divider class="mx-1 white" vertical />
-              <span class="font-weight-black">WS-1</span>
-              <v-spacer />
-              <span>09.01.18</span>
-              <!-- <v-spacer /> -->
-              <!-- <v-btn icon>
-                <v-icon>mdi-trash-can-outline</v-icon>
-              </v-btn> -->
-            </v-card-title>
-            <v-card-title class="py-1">
-              <span class="text-truncate">Workspace layout 작업</span>
-            </v-card-title>
-            <v-divider/>
-            <v-card-actions>
-              <v-btn flat color="orange">Share</v-btn>
-              <v-btn flat color="orange">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
-
-          <v-card class="my-2">
-            <v-card-title class="py-1">
-              <span class="grey--text">VueJS</span>
-              <v-divider class="mx-1 white" vertical />
-              <span class="font-weight-black">WS-2</span>
-              <v-spacer />
-              <span>09.01.20</span>
-              <!-- <v-spacer /> -->
-              <!-- <v-btn icon>
-                <v-icon>mdi-trash-can-outline</v-icon>
-              </v-btn> -->
-            </v-card-title>
-            <v-card-title class="py-1">
-              <span class="text-truncate">Work 등록 개발</span>
-            </v-card-title>
-            <v-divider/>
-            <v-card-actions>
-              <v-btn flat color="orange">Share</v-btn>
-              <v-btn flat color="orange">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
+        <v-card color="#27ae60" dark class="mb-1">
+          <v-card-title class="title font-weight-medium">
+            <v-icon class="mr-2">mdi-card-outline</v-icon>
+            TO DO
+          </v-card-title>
+        </v-card>
+        <v-card class="my-2" hover>
+          <v-card-title class="py-1">
+            <span class="grey--text">VueJS</span>
+            <v-divider class="mx-1 white" vertical />
+            <span class="font-weight-black">WS-1</span>
+            <v-spacer />
+            <span>09.01.18</span>
+          </v-card-title>
+          <v-card-title class="py-1">
+            <span class="text-truncate">Workspace layout 작업</span>
+          </v-card-title>
+          <v-divider/>
+          <v-card-actions>
+            <v-btn flat color="orange">Share</v-btn>
+            <v-btn flat color="orange">Explore</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card class="my-2">
+          <v-card-title class="py-0 px-3">
+            <span class="grey--text text-truncate">VueJSVueJS</span>
+            <v-divider class="mx-1 white" vertical />
+            <span class="font-weight-black">WS-2</span>
+            <v-spacer />
+            <v-btn icon small class="mr-0">
+              <v-icon>mdi-dots-horizontal</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-title class="py-1">
+            <span class="text-truncate">Work 등록 개발</span>
+          </v-card-title>
+          <v-card-title class="py-1">
+            <span>#electron</span>
+            <v-spacer />
+            <span>09.01.20</span>
+          </v-card-title>
+          <v-divider/>
+          <v-card-actions>
+            <v-btn flat color="orange">Share</v-btn>
+            <v-btn flat color="orange">Explore</v-btn>
+          </v-card-actions>
         </v-card>
       </v-flex>
       <v-flex md12 sm12 lg4 class="pt-0">
-        <v-card>
-          <v-card color="#e74c3c" dark class="mb-1">
-            <v-card-title class="title font-weight-medium">
-              <v-icon class="mr-2">mdi-progress-check</v-icon>
-              PROGRESS
-            </v-card-title>
-          </v-card>
-          <v-card dark>
-            <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
-              <v-container fill-height fluid>
-                <v-layout fill-height>
-                  <v-flex xs12 align-end flexbox>
-                    <span class="headline">Top 10 Australian beaches</span>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-img>
-            <v-card-title>
-              <div>
-                <span class="grey--text">Number 10</span><br>
-                <span>Whitehaven Beach</span><br>
-                <span>Whitsunday Island, Whitsunday Islands</span>
-              </div>
-            </v-card-title>
-            <v-card-actions>
-              <v-btn flat color="orange">Share</v-btn>
-              <v-btn flat color="orange">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
+        <v-card color="#e74c3c" dark class="mb-1">
+          <v-card-title class="title font-weight-medium">
+            <v-icon class="mr-2">mdi-progress-check</v-icon>
+            IN PROGRESS
+          </v-card-title>
+        </v-card>
+        <v-card class="my-2">
+          <v-card-title class="py-1">
+            <span class="grey--text">VueJS</span>
+            <v-divider class="mx-1 white" vertical />
+            <span class="font-weight-black">WS-1</span>
+            <v-spacer />
+            <span>09.01.18</span>
+          </v-card-title>
+          <v-card-title class="py-1">
+            <span class="">Workspace layout 작업Workspace layout 작업Workspace layout 작업</span>
+          </v-card-title>
+          <v-divider/>
+          <v-card-actions>
+            <v-btn flat color="orange">Share</v-btn>
+            <v-btn flat color="orange">Explore</v-btn>
+          </v-card-actions>
         </v-card>
       </v-flex>
       <v-flex md12 sm12 lg4 class="pt-0">
-        <v-card>
-          <v-card color="#3498db" dark class="mb-1">
-            <v-card-title class="title font-weight-medium">
-              <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
-              COMPLETE
-            </v-card-title>
-          </v-card>
-          <v-card dark>
-            <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
-              <v-container fill-height fluid>
-                <v-layout fill-height>
-                  <v-flex xs12 align-end flexbox>
-                    <span class="headline">Top 10 Australian beaches</span>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-img>
-            <v-card-title>
-              <div>
-                <span class="grey--text">Number 10</span><br>
-                <span>Whitehaven Beach</span><br>
-                <span>Whitsunday Island, Whitsunday Islands</span>
-              </div>
-            </v-card-title>
-            <v-card-actions>
-              <v-btn flat color="orange">Share</v-btn>
-              <v-btn flat color="orange">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
+        <v-card color="#3498db" dark class="mb-1">
+          <v-card-title class="title font-weight-medium">
+            <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
+            DONE
+          </v-card-title>
+        </v-card>
+        <v-card dark>
+          <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+            <v-container fill-height fluid>
+              <v-layout fill-height>
+                <v-flex xs12 align-end flexbox>
+                  <span class="headline">Top 10 Australian beaches</span>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-img>
+          <v-card-title>
+            <div>
+              <span class="grey--text">Number 10</span><br>
+              <span>Whitehaven Beach</span><br>
+              <span>Whitsunday Island, Whitsunday Islands</span>
+            </div>
+          </v-card-title>
+          <v-card-actions>
+            <v-btn flat color="orange">Share</v-btn>
+            <v-btn flat color="orange">Explore</v-btn>
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -151,11 +137,13 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 import Cmmn from '../cmmn'
 
 export default {
   components: {
-    ...Cmmn
+    ...Cmmn,
+    draggable
   },
   data: () => ({
     open: ['public'],
@@ -264,7 +252,7 @@ export default {
 .wtest {
   position: absolute;
   top: 9px;
-  left: 219px;
+  left: 208px;
   right: 0;
   bottom: 0;
   overflow: auto;
