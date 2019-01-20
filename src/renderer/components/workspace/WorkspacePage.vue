@@ -13,7 +13,6 @@
         </v-treeview>
       </v-card>
     </v-flex> -->
-
   <v-container fill-height fluid grid-list-xl class="pa-0">
     <v-card class="mr-3" min-width="200" style="height: 100%;">
       <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
@@ -28,7 +27,7 @@
       </v-treeview>
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
-      <v-flex md12 sm12 lg4 class="pt-0">
+      <v-flex md12 sm12 lg4 pt-0 mt-1>
         <v-card color="#27ae60" dark class="mb-1">
           <v-card-title class="title font-weight-medium">
             <v-icon class="mr-2">mdi-card-outline</v-icon>
@@ -77,7 +76,7 @@
           </v-card-actions>
         </v-card>
       </v-flex>
-      <v-flex md12 sm12 lg4 class="pt-0">
+      <v-flex md12 sm12 lg4 pt-0 mt-1>
         <v-card color="#e74c3c" dark class="mb-1">
           <v-card-title class="title font-weight-medium">
             <v-icon class="mr-2">mdi-progress-check</v-icon>
@@ -102,7 +101,7 @@
           </v-card-actions>
         </v-card>
       </v-flex>
-      <v-flex md12 sm12 lg4 class="pt-0">
+      <v-flex md12 sm12 lg4 pt-0 mt-1>
         <v-card color="#3498db" dark class="mb-1">
           <v-card-title class="title font-weight-medium">
             <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
@@ -251,7 +250,7 @@ export default {
 <style>
 .wtest {
   position: absolute;
-  top: 9px;
+  top: 0px;
   left: 208px;
   right: 0;
   bottom: 0;
