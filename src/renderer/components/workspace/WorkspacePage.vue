@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height fluid grid-list-xl class="pa-0">
-    
+
     <v-card class="mr-3" min-width="200" style="height: 100%;">
       <div>
         <v-btn icon small>
@@ -8,9 +8,10 @@
         </v-btn>
       </div>
       <v-divider />
-      <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
+
+      <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
         <template slot="label" slot-scope="{ item, open, leaf }">
-          <div v-if="!item.edit" @click="handleTreeNameClicked(item, $event)">{{item.name}}</div>
+          <div v-if="!item.edit">{{item.name}}</div>
           <div v-else-if="item.edit">
             <v-text-field :label="item.name" />
           </div>
@@ -22,7 +23,13 @@
           <v-icon v-else>
             {{ files[item.file] }}</v-icon>
         </template>
+        <template slot="append" slot-scope="{ item, open, leaf, selected, indeterminate }">
+          <v-btn icon small class="ml-0">
+            <v-icon>mdi-dots-horizontal</v-icon>
+          </v-btn>
+        </template>
       </v-treeview>
+
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 pt-0 mt-1>
@@ -98,55 +105,45 @@ export default {
     tree: [],
     items: [
       {
+        sid: 0,
         name: '.git',
         edit: false
       },
       {
+        sid: 1,
         name: 'node_modules',
         edit: true
       },
       {
-        name: 'public',
+        sid: 2,
+        name: '전표',
         edit: false,
         children: [
           {
-            name: 'static',
+            sid: 3,
+            name: '템플릿',
             edit: false,
             children: [
               {
+                sid: 4,
                 name: 'logo.png',
                 file: 'png'
               }
             ]
           },
           {
+            sid: 5,
             name: 'favicon.ico',
             edit: false,
             file: 'png'
           },
           {
+            sid: 6,
             name: 'index.html',
             edit: false,
             file: 'html'
           }
         ]
-      }
-    ],
-    bread: [
-      {
-        text: 'Dashboard',
-        disabled: false,
-        href: 'breadcrumbs_dashboard'
-      },
-      {
-        text: 'Link 1',
-        disabled: false,
-        href: 'breadcrumbs_link_1'
-      },
-      {
-        text: 'Link 2',
-        disabled: true,
-        href: 'breadcrumbs_link_2'
       }
     ]
   }),
@@ -164,8 +161,11 @@ export default {
       this.x = x
       this.y = y
     },
-    handleTreeNameClicked(dataItem, event) {
-      console.log(`${dataItem} : ${event}`)
+    handleTreeNameClicked(dataItem) {
+      dataItem.edit = !dataItem.edit
+    },
+    treeMouseOver(evt, display) {
+      evt.fromElement.getElementsByTagName('button')[0].style.display = display
     }
   }
 }
@@ -175,7 +175,7 @@ export default {
 .wtest {
   position: absolute;
   top: 0px;
-  left: 208px;
+  left: 300px;
   right: 0;
   bottom: 0;
   overflow: auto;

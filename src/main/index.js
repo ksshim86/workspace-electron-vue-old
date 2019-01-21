@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain, globalShortcut, shell } from 'electron' // eslint-disable-line
 import ipc from './tutorial/ipc' // eslint-disable-line
 import lowdb from './tutorial/lowdb' // eslint-disable-line
 
@@ -58,12 +58,14 @@ function createWindow() {
     mainWindow.show()
   })
 
+  // shell.showItemInFolder('C:')
+
   // const child = new BrowserWindow({
   //   parent: mainWindow,
   //   modal: true,
   //   show: false
   // })
-  // child.loadURL('https://github.com')
+  // child.loadURL('F://Study//html//')
   // child.once('ready-to-show', () => {
   //   child.show()
   // })
