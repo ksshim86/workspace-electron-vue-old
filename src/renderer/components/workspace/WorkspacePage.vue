@@ -1,28 +1,26 @@
 <template>
-  <!-- <v-flex md12 sm12 lg3 width="200" color="red" class="ma-1">
-      <v-card width="200">
-        <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name" open-on-click class="mr-5">
-          <template slot="prepend" slot-scope="{ item, open, leaf }">
-            <v-icon v-if="!item.file">
-              {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-            </v-icon>
-            <v-icon v-else>
-              {{ files[item.file] }}
-            </v-icon>
-          </template>
-        </v-treeview>
-      </v-card>
-    </v-flex> -->
   <v-container fill-height fluid grid-list-xl class="pa-0">
+    
     <v-card class="mr-3" min-width="200" style="height: 100%;">
+      <div>
+        <v-btn icon small>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </div>
+      <v-divider />
       <v-treeview v-model="tree" :open="open" :items="items" activatable item-key="name">
+        <template slot="label" slot-scope="{ item, open, leaf }">
+          <div v-if="!item.edit" @click="handleTreeNameClicked(item, $event)">{{item.name}}</div>
+          <div v-else-if="item.edit">
+            <v-text-field :label="item.name" />
+          </div>
+        </template>
         <template slot="prepend" slot-scope="{ item, open, leaf }">
           <v-icon v-if="!item.file">
             {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
           </v-icon>
           <v-icon v-else>
-            {{ files[item.file] }}
-          </v-icon>
+            {{ files[item.file] }}</v-icon>
         </template>
       </v-treeview>
     </v-card>
@@ -33,23 +31,6 @@
             <v-icon class="mr-2">mdi-card-outline</v-icon>
             TO DO
           </v-card-title>
-        </v-card>
-        <v-card class="my-2" hover>
-          <v-card-title class="py-1">
-            <span class="grey--text">VueJS</span>
-            <v-divider class="mx-1 white" vertical />
-            <span class="font-weight-black">WS-1</span>
-            <v-spacer />
-            <span>09.01.18</span>
-          </v-card-title>
-          <v-card-title class="py-1">
-            <span class="text-truncate">Workspace layout 작업</span>
-          </v-card-title>
-          <v-divider/>
-          <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-          </v-card-actions>
         </v-card>
         <v-card class="my-2">
           <v-card-title class="py-0 px-3">
@@ -65,15 +46,12 @@
             <span class="text-truncate">Work 등록 개발</span>
           </v-card-title>
           <v-card-title class="py-1">
-            <span>#electron</span>
+            <v-btn icon small class="ml-0">
+              <v-icon>mdi-folder-open</v-icon>
+            </v-btn>
             <v-spacer />
             <span>09.01.20</span>
           </v-card-title>
-          <v-divider/>
-          <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-          </v-card-actions>
         </v-card>
       </v-flex>
       <v-flex md12 sm12 lg4 pt-0 mt-1>
@@ -83,23 +61,6 @@
             IN PROGRESS
           </v-card-title>
         </v-card>
-        <v-card class="my-2">
-          <v-card-title class="py-1">
-            <span class="grey--text">VueJS</span>
-            <v-divider class="mx-1 white" vertical />
-            <span class="font-weight-black">WS-1</span>
-            <v-spacer />
-            <span>09.01.18</span>
-          </v-card-title>
-          <v-card-title class="py-1">
-            <span class="">Workspace layout 작업Workspace layout 작업Workspace layout 작업</span>
-          </v-card-title>
-          <v-divider/>
-          <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-          </v-card-actions>
-        </v-card>
       </v-flex>
       <v-flex md12 sm12 lg4 pt-0 mt-1>
         <v-card color="#3498db" dark class="mb-1">
@@ -107,28 +68,6 @@
             <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
             DONE
           </v-card-title>
-        </v-card>
-        <v-card dark>
-          <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
-            <v-container fill-height fluid>
-              <v-layout fill-height>
-                <v-flex xs12 align-end flexbox>
-                  <span class="headline">Top 10 Australian beaches</span>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-img>
-          <v-card-title>
-            <div>
-              <span class="grey--text">Number 10</span><br>
-              <span>Whitehaven Beach</span><br>
-              <span>Whitsunday Island, Whitsunday Islands</span>
-            </div>
-          </v-card-title>
-          <v-card-actions>
-            <v-btn flat color="orange">Share</v-btn>
-            <v-btn flat color="orange">Explore</v-btn>
-          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -159,16 +98,20 @@ export default {
     tree: [],
     items: [
       {
-        name: '.git'
+        name: '.git',
+        edit: false
       },
       {
-        name: 'node_modules'
+        name: 'node_modules',
+        edit: true
       },
       {
         name: 'public',
+        edit: false,
         children: [
           {
             name: 'static',
+            edit: false,
             children: [
               {
                 name: 'logo.png',
@@ -178,37 +121,15 @@ export default {
           },
           {
             name: 'favicon.ico',
+            edit: false,
             file: 'png'
           },
           {
             name: 'index.html',
+            edit: false,
             file: 'html'
           }
         ]
-      },
-      {
-        name: '.gitignore',
-        file: 'txt'
-      },
-      {
-        name: 'babel.config.js',
-        file: 'js'
-      },
-      {
-        name: 'package.json',
-        file: 'json'
-      },
-      {
-        name: 'README.md',
-        file: 'md'
-      },
-      {
-        name: 'vue.config.js',
-        file: 'js'
-      },
-      {
-        name: 'yarn.lock',
-        file: 'txt'
       }
     ],
     bread: [
@@ -242,6 +163,9 @@ export default {
     onDrag(x, y) {
       this.x = x
       this.y = y
+    },
+    handleTreeNameClicked(dataItem, event) {
+      console.log(`${dataItem} : ${event}`)
     }
   }
 }
