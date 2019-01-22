@@ -16,6 +16,11 @@ export default new Router({
       component: require('@/components/workspace/WorkspacePage').default
     },
     {
+      path: '/WTreeView',
+      name: 'WTreeView',
+      component: require('@/components/cmmn/WTreeView').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

@@ -21,7 +21,8 @@ export default {
     return {
       items: [
         { title: 'Dashboard', icon: 'dashboard', to: '/' },
-        { title: 'Workspace', icon: 'group_work', to: '/workspace' }
+        { title: 'Workspace', icon: 'group_work', to: '/workspace' },
+        { title: 'WTreeView', icon: 'group_work', to: '/WTreeView' }
       ],
       mini: false,
       right: null
