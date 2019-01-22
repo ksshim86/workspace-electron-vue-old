@@ -45,43 +45,6 @@ export default {
     }
   },
   methods: {
-    allowDrag(model) {
-      if (model.name === 'Node 0-1') {
-        // can't be dragged
-        return false
-      }
-      // can be dragged
-      return true
-    },
-    allowDrop(model) {
-      if (model.name === 'Node 2-2') {
-        // can't be placed
-        return false
-      }
-      // can be placed
-      return true
-    },
-    curNodeClicked() {
-      // console.log('curNodeClicked', );
-    },
-    dragHandler() {
-      // console.log('dragHandler: ', , e);
-    },
-    dragEnterHandler() {
-      // console.log('dragEnterHandler: ', , e);
-    },
-    dragLeaveHandler() {
-      // console.log('dragLeaveHandler: ', , e);
-    },
-    dragOverHandler() {
-      // console.log('dragOverHandler: ', , e);
-    },
-    dragEndHandler() {
-      // console.log('dragEndHandler: ', , e);
-    },
-    dropHandler() {
-      // console.log('dropHandler: ', , e);
-    }
   }
 }
 </script>
