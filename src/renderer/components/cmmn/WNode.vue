@@ -60,7 +60,7 @@ export default {
       isDraggable: false,
       isDrag: false,
       isClicked: false,
-      isDisplay: true,
+      isDisplay: false,
       showMenu: false,
       x: 0,
       y: 0
@@ -68,6 +68,7 @@ export default {
   },
   beforeMount() {
     if (this.depth > 1) this.isDraggable = true
+    if (this.depth < 1) this.isDisplay = true
   },
   computed: {
     isFolder() {
@@ -89,8 +90,6 @@ export default {
       event.preventDefault()
     },
     drop() {
-      const pa = fromItems.$parent.items.children
-
       if (this.isAllowDrop) {
         toItems = this
 
@@ -100,9 +99,7 @@ export default {
         ) {
           toItems.items.children.push(fromItems.items)
 
-          fromItems.$parent.items.children = pa.filter(item => item.sid !== fromItems.items.sid)
-
-          console.log(pa)
+          fromItems.$parent.items.children = fromItems.$parent.items.children.filter(item => item.sid !== fromItems.items.sid)
         }
       }
     },
