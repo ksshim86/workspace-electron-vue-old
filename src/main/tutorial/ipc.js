@@ -1,11 +1,9 @@
 import { ipcMain, dialog } from 'electron'
 import lowdb from './lowdb'
 
-ipcMain.on('send-workspace-path-save', (event, data) => {
+ipcMain.on('send-workspace-path-save', (event) => {
   dialog.showOpenDialog({ properties: ['promptToCreate', 'openDirectory'] }, (workspacePaths) => {
     let workspacePath = ''
-
-    console.log(`[debug]ipcMain > send-workspace-path-save > data={${data}}`)
 
     if (workspacePaths !== undefined) {
       [workspacePath] = workspacePaths
@@ -13,8 +11,6 @@ ipcMain.on('send-workspace-path-save', (event, data) => {
     }
 
     event.returnValue = workspacePath
-
-    console.log(`[debug]ipcMain > send-workspace-path-save > result={${workspacePath}}`)
   })
 })
 

@@ -1,17 +1,19 @@
 const state = {
-  drawer: '@@@@'
+  drawer: false
+}
+const getters = {
+  getDrawer: state => state.drawer
 }
 
 const mutations = {
-  INCREMENT_MAIN_COUNTER(state) {
-    state.drawer = !state.drawer
+  IS_DRAWER(state, value) {
+    state.drawer = value
   }
 }
 
 const actions = {
-  someAsyncTask({ commit }) {
-    // do something async
-    commit('INCREMENT_MAIN_COUNTER')
+  IS_DRAWER: ({ commit }, payload) => {
+    commit('IS_DRAWER', payload)
   }
 }
 
@@ -19,5 +21,6 @@ export default {
   name: 'WNavigation',
   state,
   mutations,
-  actions
+  actions,
+  getters
 }
