@@ -1,10 +1,6 @@
 <template>
-  <div>
-    <ul>
-      <w-node :items="items">
-      </w-node>
-    </ul>
-  </div>
+  <w-node :items="items" :depth="rootDepth">
+  </w-node>
 </template>
 
 <script>
@@ -16,27 +12,34 @@ export default {
   components: { draggable, WNode },
   data() {
     return {
+      rootDepth: 0,
       items: {
         sid: 0,
-        name: 'My Tree',
+        name: '1',
         children: [
-          { sid: 1, name: 'hello' },
-          { sid: 2, name: 'wat' },
+          { sid: 1, name: '1-1', children: [] },
+          { sid: 2, name: '1-2', children: [] },
           {
             sid: 3,
-            name: 'child folder',
+            name: '1-3',
             children: [
               {
                 sid: 4,
-                name: 'child folder',
-                children: [{ sid: 5, name: 'hello' }, { sid: 6, name: 'wat' }]
+                name: '1-3-1',
+                children: [
+                  { sid: 5, name: '1-3-1-1', children: [] },
+                  { sid: 6, name: '1-3-1-2', children: [] }
+                ]
               },
-              { sid: 7, name: 'hello' },
-              { sid: 8, name: 'wat' },
+              { sid: 7, name: '1-3-2', children: [] },
+              { sid: 8, name: '1-3-3', children: [] },
               {
                 sid: 9,
-                name: 'child folder',
-                children: [{ sid: 10, name: 'hello' }, { sid: 11, name: 'wat' }]
+                name: '1-3-4',
+                children: [
+                  { sid: 10, name: '1-3-4-1', children: [] },
+                  { sid: 11, name: '1-3-4-2', children: [] }
+                ]
               }
             ]
           }
@@ -44,8 +47,7 @@ export default {
       }
     }
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
 

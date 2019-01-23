@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid grid-list-xl class="pa-0">
 
-    <v-card class="mr-3" min-width="200" style="height: 100%;">
+    <v-card class="mr-3" min-width="250" style="height: 100%;">
       <div>
         <v-btn icon small>
           <v-icon>mdi-plus</v-icon>
@@ -9,7 +9,7 @@
       </div>
       <v-divider />
 
-      <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
+      <!-- <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
         <template slot="label" slot-scope="{ item, open, leaf }">
           <div v-if="!item.edit">{{item.name}}</div>
           <div v-else-if="item.edit">
@@ -28,8 +28,8 @@
             <v-icon>mdi-dots-horizontal</v-icon>
           </v-btn>
         </template>
-      </v-treeview>
-
+      </v-treeview> -->
+      <w-tree-view></w-tree-view>
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 pt-0 mt-1>
