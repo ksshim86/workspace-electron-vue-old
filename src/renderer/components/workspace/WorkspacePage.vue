@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid grid-list-xl class="pa-0">
 
-    <v-card class="mr-3" min-width="250" style="height: 100%;">
+    <v-card class="mr-3" min-width="200" width="200" style="height: 100%; overflow-x : auto; position: absolute; white-space: nowrap;">
       <div>
         <v-btn icon small>
           <v-icon>mdi-plus</v-icon>
@@ -9,7 +9,16 @@
       </div>
       <v-divider />
 
-      <!-- <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
+      <!-- 
+        min-width: 200px;
+    width: 200px;
+    height: 100%;
+    overflow: auto;
+    position: absolute;
+    overflow-x: scroll;
+    white-space: nowrap;
+    
+        <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
         <template slot="label" slot-scope="{ item, open, leaf }">
           <div v-if="!item.edit">{{item.name}}</div>
           <div v-else-if="item.edit">
@@ -175,7 +184,7 @@ export default {
 .wtest {
   position: absolute;
   top: 0px;
-  left: 300px;
+  left: 200px;
   right: 0;
   bottom: 0;
   overflow: auto;
@@ -186,19 +195,25 @@ export default {
   background-color: rgba(0, 0, 0, 0);
   -webkit-border-radius: 100px;
 }
+
+::-webkit-scrollbar:horizontal {
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0);
+  -webkit-border-radius: 100px;
+}
 /* hover effect for both scrollbar area, and scrollbar 'thumb' */
 ::-webkit-scrollbar:hover {
   background-color: rgba(0, 0, 0, 0.09);
 }
 
 /* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
-::-webkit-scrollbar-thumb:vertical {
+::-webkit-scrollbar-thumb {
   /* This is the EXACT color of Mac OS scrollbars. 
      Yes, I pulled out digital color meter */
   background: rgba(0, 0, 0, 0.5);
   -webkit-border-radius: 100px;
 }
-::-webkit-scrollbar-thumb:vertical:active {
+::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.61); /* Some darker color when you click it */
   -webkit-border-radius: 100px;
 }

@@ -1,41 +1,19 @@
 <template>
-  <div 
-    :class="['my-2']" 
-    :draggable="isDraggable"
-    :allowDrop="isAllowDrop"
-    @dragstart.stop="dragstart" 
-    @dragover="dragover" 
-    @drop.stop="drop" 
-  >
-    <v-icon v-if="isFolder">mdi-menu-right</v-icon>
-    <v-icon v-if="!isClicked" :class="[isFolder ? '' : 'pl-4']" @dblclick="dblclick">mdi-folder</v-icon>
-    <v-icon v-if="isClicked" :class="[isFolder ? '' : 'pl-4']" @dblclick="dblclick">mdi-folder-open</v-icon>
-    <span :class="['title', 'font-weight-light']" @contextmenu.prevent.stop="handleRightClicked">{{items.name}}</span>
-    <div class="text-xs-center">
-      <v-menu v-model="showMenu"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-      >
-        <v-card flat>
-          <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
-          <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
-        </v-card>
-      </v-menu>
+  <div :class="['ma-0']" :style="paddingLeft" :draggable="isDraggable" :allowDrop="isAllowDrop" @dragstart.stop="dragstart" @dragover="dragover" @drop.stop="drop" @dragenter.prevent="dragenter">
+    <div v-if="!isRoot" @click="handleFolderClicked" style="display: flex;">
+      <v-icon v-if="isFolder" :class="['mdi', showArrow ? 'mdi-menu-down' : 'mdi-menu-right']" />
+      <v-icon :class="['mdi', isFolderOpen ? 'mdi-folder-open' : 'mdi-folder']" :style="isFolder ? '' : 'padding-left: 24px;'" />
+      <span :class="['title', 'font-weight-light', 'pr-3', 'text-truncate']" @contextmenu.prevent.stop="handleRightClicked">{{items.name}}</span>
+      <div class="text-xs-center">
+        <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+          <v-card flat>
+            <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
+            <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
+          </v-card>
+        </v-menu>
+      </div>
     </div>
-    <!-- <v-btn icon small absolute right="">
-      <v-icon>mdi-dots-horizontal</v-icon>
-    </v-btn> -->
-    <w-node 
-      v-if="isFolder"
-      v-show="isDisplay"
-      :class="['pl-5']" 
-      v-for="items in items.children" 
-      :items="items" 
-      :key="items.sid"
-      :depth="increaseDepth"
-    >
+    <w-node v-if="isFolder" v-show="isDisplay" v-for="items in items.children" :items="items" :key="items.sid" :depth="increaseDepth">
     </w-node>
   </div>
 </template>
@@ -79,6 +57,18 @@ export default {
     },
     increaseDepth() {
       return this.depth + 1
+    },
+    isRoot() {
+      return this.depth === 0
+    },
+    paddingLeft() {
+      return this.depth === 1 || this.isRoot ? '' : 'padding-left: 17px !important;'
+    },
+    showArrow() {
+      return this.isClicked && this.isFolder
+    },
+    isFolderOpen() {
+      return this.isClicked && this.isFolder
     }
   },
   methods: {
@@ -88,6 +78,8 @@ export default {
     },
     dragover(event) {
       event.preventDefault()
+    },
+    dragenter() {
     },
     drop() {
       if (this.isAllowDrop) {
@@ -99,11 +91,12 @@ export default {
         ) {
           toItems.items.children.push(fromItems.items)
 
-          fromItems.$parent.items.children = fromItems.$parent.items.children.filter(item => item.sid !== fromItems.items.sid)
+          fromItems.$parent.items.children =
+            fromItems.$parent.items.children.filter(item => item.sid !== fromItems.items.sid)
         }
       }
     },
-    dblclick() {
+    handleFolderClicked() {
       this.isClicked = !this.isClicked && this.items.children.length > 0
       this.isDisplay = !this.isDisplay && this.items.children.length > 0
     },

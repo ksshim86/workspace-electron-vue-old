@@ -38,7 +38,7 @@ export default {
                 name: '1-3-4',
                 children: [
                   { sid: 10, name: '1-3-4-1', children: [] },
-                  { sid: 11, name: '1-3-4-2', children: [] }
+                  { sid: 11, name: '1-3-4-2-2-2-2-2-2-2', children: [] }
                 ]
               }
             ]
