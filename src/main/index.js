@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
-import lowdb from './tutorial/lowdb'
+import { app, BrowserWindow, ipcMain, globalShortcut, shell } from 'electron' // eslint-disable-line
+import ipc from './tutorial/ipc' // eslint-disable-line
+import lowdb from './tutorial/lowdb' // eslint-disable-line
+
+// import '../renderer/store'
 
 /**
  * Set `__static` path to static files in production
@@ -12,6 +15,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+
 const winURL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:9080'
@@ -32,19 +36,43 @@ function createWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 650,
     useContentSize: true,
-    width: 800
+    width: 1264,
+    frame: true,
+    show: false
   })
+
+  mainWindow.setMenu(null)
 
   initData()
 
   mainWindow.loadURL(winURL)
-  mainWindow.setMinimumSize(800, 563)
+  // mainWindow.setMinimumSize(1264, 563)
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  // shell.showItemInFolder('C:')
+
+  // const child = new BrowserWindow({
+  //   parent: mainWindow,
+  //   modal: true,
+  //   show: false
+  // })
+  // child.loadURL('F://Study//html//')
+  // child.once('ready-to-show', () => {
+  //   child.show()
+  // })
+
+  // globalShortcut.register('CommandOrControl+X', () => {
+  //   console.log('CommandOrControl+X is pressed')
+  // })
 }
 
 app.on('ready', createWindow)

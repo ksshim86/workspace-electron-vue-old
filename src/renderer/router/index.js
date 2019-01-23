@@ -7,8 +7,18 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
+      name: 'tutorial-page',
       component: require('@/components/tutorial/TutorialPage').default
+    },
+    {
+      path: '/workspace',
+      name: 'workspace-page',
+      component: require('@/components/workspace/WorkspacePage').default
+    },
+    {
+      path: '/WTreeView',
+      name: 'WTreeView',
+      component: require('@/components/cmmn/WTreeView').default
     },
     {
       path: '*',
