@@ -38,7 +38,7 @@
           </v-btn>
         </template>
       </v-treeview> -->
-      <w-tree-view></w-tree-view>
+      <w-tree-view :items="items"></w-tree-view>
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 pt-0 mt-1>
@@ -114,51 +114,68 @@ export default {
     tree: [],
     items: [
       {
-        sid: 0,
+        sid: 1,
         name: '.git',
+        type: 'folder',
+        path: '',
         edit: false
       },
       {
-        sid: 1,
+        sid: 2,
         name: 'node_modules',
-        edit: true
+        type: 'folder',
+        path: '',
+        edit: true,
+        children: []
       },
       {
-        sid: 2,
+        sid: 3,
         name: '전표',
+        type: 'folder',
+        path: '',
         edit: false,
         children: [
           {
-            sid: 3,
+            sid: 4,
             name: '템플릿',
+            type: 'folder',
+            path: '',
             edit: false,
             children: [
               {
-                sid: 4,
+                sid: 5,
                 name: 'logo.png',
-                file: 'png'
+                type: 'folder',
+                path: '',
+                edit: false,
+                file: 'png',
+                children: []
               }
             ]
           },
           {
-            sid: 5,
+            sid: 6,
             name: 'favicon.ico',
+            type: 'folder',
+            path: '',
             edit: false,
-            file: 'png'
+            file: 'png',
+            children: []
           },
           {
-            sid: 6,
+            sid: 7,
             name: 'index.html',
+            type: 'folder',
+            path: '',
             edit: false,
-            file: 'html'
+            file: 'html',
+            children: []
           }
         ]
       }
     ]
   }),
-  mounted() {
-    console.log(this.$vuetify.breakpoint)
-  },
+  mounted() {},
   methods: {
     onResize(x, y, width, height) {
       this.x = x
@@ -193,13 +210,11 @@ export default {
   width: 8px; /* 1px wider than Lion. */
   /* This is more usable for users trying to click it. */
   background-color: rgba(0, 0, 0, 0);
-  -webkit-border-radius: 100px;
 }
 
 ::-webkit-scrollbar:horizontal {
   height: 8px;
   background-color: rgba(0, 0, 0, 0);
-  -webkit-border-radius: 100px;
 }
 /* hover effect for both scrollbar area, and scrollbar 'thumb' */
 ::-webkit-scrollbar:hover {
@@ -211,10 +226,8 @@ export default {
   /* This is the EXACT color of Mac OS scrollbars. 
      Yes, I pulled out digital color meter */
   background: rgba(0, 0, 0, 0.5);
-  -webkit-border-radius: 100px;
 }
 ::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.61); /* Some darker color when you click it */
-  -webkit-border-radius: 100px;
 }
 </style>

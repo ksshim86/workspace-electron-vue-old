@@ -27,6 +27,9 @@ module.exports = {
     'no-underscore-dangle': 0,
     'linebreak-style': ['error', 'windows'],
     'no-return-assign': 0,
+    'max-len': 0,
+    'function-paren-newline': ['error', 'consistent'],
+    'no-unused-vars': ['error', { args: 'none' }],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }

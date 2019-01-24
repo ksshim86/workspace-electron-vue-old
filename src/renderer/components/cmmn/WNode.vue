@@ -1,9 +1,19 @@
 <template>
-  <div :class="['ma-0']" :style="paddingLeft" :draggable="isDraggable" :allowDrop="isAllowDrop" @dragstart.stop="dragstart" @dragover="dragover" @drop.stop="drop" @dragenter.prevent="dragenter">
+  <div :class="[isWork ? 'my-2 mx-0' : 'ma-0']" :style="paddingLeft" :draggable="isDraggable" :allowDrop="isAllowDrop" @dragstart.stop="dragstart" @dragover="dragover" @drop.stop="drop" @dragenter.prevent="dragenter">
     <div v-if="!isRoot" @click="handleFolderClicked" style="display: flex;">
       <v-icon v-if="isFolder" :class="['mdi', showArrow ? 'mdi-menu-down' : 'mdi-menu-right']" />
-      <v-icon :class="['mdi', isFolderOpen ? 'mdi-folder-open' : 'mdi-folder']" :style="isFolder ? '' : 'padding-left: 24px;'" />
-      <span :class="['title', 'font-weight-light', 'pr-3', 'text-truncate']" @contextmenu.prevent.stop="handleRightClicked">{{items.name}}</span>
+      <v-icon 
+        v-if="!isWork"
+        :class="['mdi', isFolderOpen ? filesIconClass.folderClose : filesIconClass.folderOpen]" 
+        :style="isFolder ? '' : 'padding-left: 24px;'" 
+      />
+      <v-icon v-if="isWork" :class="['mdi', 'mdi-developer-board']" :style="isFolder ? '' : 'padding-left: 24px;'" />
+      <div 
+        :class="['title', 'font-weight-light', 'pr-3']" 
+        @contextmenu.prevent.stop="handleRightClicked"
+      >
+        {{items.name}}
+      </div>
       <div class="text-xs-center">
         <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
           <v-card flat>
@@ -14,6 +24,7 @@
       </div>
     </div>
     <w-node v-if="isFolder" v-show="isDisplay" v-for="items in items.children" :items="items" :key="items.sid" :depth="increaseDepth">
+      1234234324
     </w-node>
   </div>
 </template>
@@ -27,7 +38,17 @@ export default {
   name: 'WNode',
   components: {},
   props: {
-    items: Object,
+    items: {
+      type: Object,
+      default: {
+        sid: 0,
+        name: '',
+        type: '',
+        path: '',
+        edit: false,
+        children: []
+      }
+    },
     depth: {
       type: Number,
       default: 0
@@ -35,6 +56,19 @@ export default {
   },
   data() {
     return {
+      filesIconClass: {
+        folderClose: 'mdi-folder',
+        work: 'mdi-developer-board',
+        folderOpen: 'mdi-folder-open',
+        html: 'mdi-language-html5',
+        js: 'mdi-nodejs',
+        json: 'mdi-json',
+        md: 'mdi-markdown',
+        pdf: 'mdi-file-pdf',
+        png: 'mdi-file-image',
+        txt: 'mdi-file-document-outline',
+        xls: 'mdi-file-excel'
+      },
       isDraggable: false,
       isDrag: false,
       isClicked: false,
@@ -44,13 +78,21 @@ export default {
       y: 0
     }
   },
+  created() {
+    if (!this.items.children) {
+      this.$set(this.items, 'children', [])
+    }
+  },
   beforeMount() {
     if (this.depth > 1) this.isDraggable = true
     if (this.depth < 1) this.isDisplay = true
   },
+  updated() {
+    // console.log(`this node name: ${this.items.name}`)
+  },
   computed: {
     isFolder() {
-      return this.items.children && this.items.children.length
+      return this.items.children !== undefined && this.items.children.length > 0
     },
     isAllowDrop() {
       return this.depth > 0
@@ -60,6 +102,9 @@ export default {
     },
     isRoot() {
       return this.depth === 0
+    },
+    isWork() {
+      return this.depth === 1
     },
     paddingLeft() {
       return this.depth === 1 || this.isRoot ? '' : 'padding-left: 17px !important;'
@@ -73,14 +118,12 @@ export default {
   },
   methods: {
     dragstart() {
-      // event.dataTransfer.setData('items', JSON.stringify(this.items))
       fromItems = this
     },
     dragover(event) {
       event.preventDefault()
     },
-    dragenter() {
-    },
+    dragenter() {},
     drop() {
       if (this.isAllowDrop) {
         toItems = this
@@ -91,8 +134,9 @@ export default {
         ) {
           toItems.items.children.push(fromItems.items)
 
-          fromItems.$parent.items.children =
-            fromItems.$parent.items.children.filter(item => item.sid !== fromItems.items.sid)
+          fromItems.$parent.items.children = fromItems.$parent.items.children.filter(
+            item => item.sid !== fromItems.items.sid
+          )
         }
       }
     },
