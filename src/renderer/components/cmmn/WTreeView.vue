@@ -1,36 +1,39 @@
 <template>
-  <w-node :items="nodes" :depth="rootDepth">
-  </w-node>
+  <!-- <w-node :nodes="nodes" :depth="rootDepth">
+  </w-node> -->
+  <div>
+    <w-node v-for="node in nodes" :nodes="node" :key="node.sid"></w-node>
+  </div>
 </template>
 
 <script>
 import WNode from './WNode'
 
 export default {
-  name: 'WTreeView',
+  name: 'w-tree-view',
   components: { WNode },
   props: {
-    items: Array
+    nodes: Array
   },
   data() {
     return {
-      rootDepth: 0,
-      nodes: {
-        sid: 0,
-        name: 'root',
-        type: 'root',
-        path: '',
-        edit: false,
-        children: []
-      }
+      rootDepth: 0
+      // nodes: {
+      //   sid: 0,
+      //   name: 'root',
+      //   type: 'root',
+      //   path: '',
+      //   edit: false,
+      //   children: []
+      // }
     }
   },
   created() {
-    if (this.items) {
-      // this.items = Object.assign(this.items, this.initItemChildren(this.items))
-      // this.items.filter(item => this.nodes.children.push(item))
-      this.nodes.children = this.items
-    }
+    // if (this.items) {
+    // this.items = Object.assign(this.items, this.initItemChildren(this.items))
+    // this.items.filter(item => this.nodes.children.push(item))
+    // this.nodes.children = this.items
+    // }
   },
   methods: {
     initItemChildren(items) {

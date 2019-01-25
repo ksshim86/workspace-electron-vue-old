@@ -1,21 +1,23 @@
 <template>
-  <div :class="[isWork ? 'my-2 mx-0' : 'ma-0']" :style="paddingLeft" :draggable="isDraggable" :allowDrop="isAllowDrop" @dragstart.stop="dragstart" @dragover="dragover" @drop.stop="drop" @dragenter.prevent="dragenter">
-    <div v-if="!isRoot" @click="handleFolderClicked" style="display: flex;">
-      <v-icon v-if="isFolder" :class="['mdi', showArrow ? 'mdi-menu-down' : 'mdi-menu-right']" />
-      <v-icon 
-        v-if="!isWork"
-        :class="['mdi', isFolderOpen ? filesIconClass.folderClose : filesIconClass.folderOpen]" 
-        :style="isFolder ? '' : 'padding-left: 24px;'" 
-      />
-      <v-icon v-if="isWork" :class="['mdi', 'mdi-developer-board']" :style="isFolder ? '' : 'padding-left: 24px;'" />
+  <div 
+    :style="paddingLeft" 
+    :draggable="isDraggable" 
+    @dragstart.stop="dragstart" 
+    @dragover.stop="dragOver" 
+    @drop.stop="drop" 
+    @dragenter="dragEnter"
+  >
+    <div class="w-node" @click="handleNodeClick" style="display: flex;">
+      <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
+      <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
       <div 
-        :class="['title', 'font-weight-light', 'pr-3']" 
+        :class="['pr-3']" 
         @contextmenu.prevent.stop="handleRightClicked"
       >
-        {{items.name}}
+        <p :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
       </div>
       <div class="text-xs-center">
-        <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+        <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
           <v-card flat>
             <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
             <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
@@ -23,29 +25,29 @@
         </v-menu>
       </div>
     </div>
-    <w-node v-if="isFolder" v-show="isDisplay" v-for="items in items.children" :items="items" :key="items.sid" :depth="increaseDepth">
-      1234234324
+    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth">
     </w-node>
   </div>
 </template>
 
 <script>
-let fromItems = null
-let toItems = null
+let _fromNode = null
+let _toNode = null
 let prevRightClickedObj = null
+let _dragEnterNodeId = -1
+let _dragEnterStartTime = null
 
 export default {
-  name: 'WNode',
+  name: 'w-node',
   components: {},
   props: {
-    items: {
+    nodes: {
       type: Object,
       default: {
         sid: 0,
         name: '',
         type: '',
         path: '',
-        edit: false,
         children: []
       }
     },
@@ -56,104 +58,160 @@ export default {
   },
   data() {
     return {
-      filesIconClass: {
-        folderClose: 'mdi-folder',
-        work: 'mdi-developer-board',
-        folderOpen: 'mdi-folder-open',
-        html: 'mdi-language-html5',
-        js: 'mdi-nodejs',
-        json: 'mdi-json',
-        md: 'mdi-markdown',
-        pdf: 'mdi-file-pdf',
-        png: 'mdi-file-image',
-        txt: 'mdi-file-document-outline',
-        xls: 'mdi-file-excel'
+      options: {
+        rename: false,
+        x: 0,
+        y: 0
       },
-      isDraggable: false,
-      isDrag: false,
-      isClicked: false,
-      isDisplay: false,
-      showMenu: false,
-      x: 0,
-      y: 0
+      isOpen: false,
+      isSelected: false,
+      isOptionsOpen: false,
+      type: {
+        icons: {
+          folder: 'mdi-folder',
+          work: 'mdi-developer-board',
+          html: 'mdi-language-html5',
+          js: 'mdi-nodejs',
+          json: 'mdi-json',
+          md: 'mdi-markdown',
+          pdf: 'mdi-file-pdf',
+          png: 'mdi-file-image',
+          txt: 'mdi-file-document-outline',
+          xls: 'mdi-file-excel'
+        }
+      }
     }
   },
   created() {
-    if (!this.items.children) {
-      this.$set(this.items, 'children', [])
+    if (!this.nodes.children) {
+      this.$set(this.nodes, 'children', [])
     }
   },
-  beforeMount() {
-    if (this.depth > 1) this.isDraggable = true
-    if (this.depth < 1) this.isDisplay = true
-  },
   updated() {
-    // console.log(`this node name: ${this.items.name}`)
+    // this.nodeOpen()
+    // this.toggleFolderIcon()
   },
   computed: {
-    isFolder() {
-      return this.items.children !== undefined && this.items.children.length > 0
+    isDraggable() {
+      return this.depth > 0 || this.nodes.type !== 'work'
     },
-    isAllowDrop() {
-      return this.depth > 0
+    isDrop() {
+      return this.nodes.type === 'folder' || this.nodes.type === 'work'
+    },
+    hasChildren() {
+      return !!this.nodes.children && !!this.nodes.children.length
     },
     increaseDepth() {
       return this.depth + 1
     },
-    isRoot() {
-      return this.depth === 0
-    },
-    isWork() {
-      return this.depth === 1
-    },
     paddingLeft() {
-      return this.depth === 1 || this.isRoot ? '' : 'padding-left: 17px !important;'
+      return this.depth === 0 ? '' : 'padding-left: 17px !important;'
     },
-    showArrow() {
-      return this.isClicked && this.isFolder
-    },
-    isFolderOpen() {
-      return this.isClicked && this.isFolder
+    iconClass() {
+      let iconClass = ''
+
+      if (this.nodes.type === 'folder') {
+        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+      }
+
+      iconClass = `mdi ${this.type.icons[this.nodes.type]}`
+
+      return iconClass
+    }
+  },
+  watch: {
+    hasChildren() {
+      if (!this.nodes.children.length) {
+        this.isOpen = false
+      }
     }
   },
   methods: {
-    dragstart() {
-      fromItems = this
+    dragstart(event) {
+      // event.preventDefault()
+      event.dataTransfer.effectAllowed = 'move'
+
+      _fromNode = this
     },
-    dragover(event) {
+    dragOver(event) {
+      let _dragOverTime = null
+
+      if (this.nodes.sid === _dragEnterNodeId) {
+        _dragOverTime = new Date().getTime()
+
+        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
+          this.handleNodeClick()
+        }
+      } else {
+        _dragEnterStartTime = null
+      }
+
       event.preventDefault()
     },
-    dragenter() {},
-    drop() {
-      if (this.isAllowDrop) {
-        toItems = this
+    dragEnter(event) {
+      if (!this.isOpen && this.hasChildren) {
+        _dragEnterNodeId = this.nodes.sid
+
+        _dragEnterStartTime = new Date().getTime()
+      }
+
+      event.preventDefault()
+    },
+    drop(event) {
+      if (this.isDrop) {
+        _toNode = this
 
         if (
-          fromItems.items.sid !== toItems.items.sid &&
-          fromItems.$parent.items.sid !== toItems.items.sid
+          _fromNode.nodes.sid !== _toNode.nodes.sid &&
+          _fromNode.$parent.nodes.sid !== _toNode.nodes.sid
         ) {
-          toItems.items.children.push(fromItems.items)
+          _toNode.nodes.children.push(_fromNode.nodes)
 
-          fromItems.$parent.items.children = fromItems.$parent.items.children.filter(
-            item => item.sid !== fromItems.items.sid
+          _fromNode.$parent.nodes.children = _fromNode.$parent.nodes.children.filter(
+            item => item.sid !== _fromNode.nodes.sid
           )
+
+          _toNode.nodes.children.sort((a, b) => {
+            if (a.type === b.type) {
+              return a.name > b.name
+            }
+            if (a.type === 'folder' && b.type !== 'folder') {
+              return -1
+            }
+            if (a.type !== 'folder' && b.type === 'folder') {
+              return 1
+            }
+
+            return 0
+          })
         }
       }
+
+      event.preventDefault()
     },
-    handleFolderClicked() {
-      this.isClicked = !this.isClicked && this.items.children.length > 0
-      this.isDisplay = !this.isDisplay && this.items.children.length > 0
+    handleNodeClick() {
+      this.nodeOpen()
+      // this.toggleFolderIcon()
+    },
+    nodeOpen() {
+      this.isOpen = !this.isOpen && this.hasChildren
+    },
+    toggleFolderIcon() {
+      // watch로 바꾸는게 좋을듯
+      if (this.nodes.type === 'folder') {
+        this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+      }
     },
     handleRightClicked(e) {
-      if (prevRightClickedObj) prevRightClickedObj.showMenu = false
+      if (prevRightClickedObj) prevRightClickedObj.isOptionsOpen = false
 
       prevRightClickedObj = this
 
-      this.x = e.clientX
-      this.y = e.clientY
+      this.options.x = e.clientX
+      this.options.y = e.clientY
 
       this.$nextTick(() => {
-        this.showMenu = true
+        this.isOptionsOpen = true
       })
     }
   }

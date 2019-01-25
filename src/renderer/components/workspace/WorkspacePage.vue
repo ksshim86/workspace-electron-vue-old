@@ -38,7 +38,7 @@
           </v-btn>
         </template>
       </v-treeview> -->
-      <w-tree-view :items="items"></w-tree-view>
+      <w-tree-view :nodes="items"></w-tree-view>
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
       <v-flex md12 sm12 lg4 pt-0 mt-1>
@@ -116,22 +116,30 @@ export default {
       {
         sid: 1,
         name: '.git',
-        type: 'folder',
+        type: 'work',
         path: '',
         edit: false
       },
       {
         sid: 2,
         name: 'node_modules',
-        type: 'folder',
+        type: 'work',
         path: '',
         edit: true,
-        children: []
+        children: [
+          {
+            sid: 10,
+            name: 'testtest',
+            type: 'folder',
+            path: '',
+            edit: false
+          }
+        ]
       },
       {
         sid: 3,
         name: '전표',
-        type: 'folder',
+        type: 'work',
         path: '',
         edit: false,
         children: [
@@ -145,7 +153,7 @@ export default {
               {
                 sid: 5,
                 name: 'logo.png',
-                type: 'folder',
+                type: 'png',
                 path: '',
                 edit: false,
                 file: 'png',
@@ -156,7 +164,7 @@ export default {
           {
             sid: 6,
             name: 'favicon.ico',
-            type: 'folder',
+            type: 'png',
             path: '',
             edit: false,
             file: 'png',
@@ -165,7 +173,7 @@ export default {
           {
             sid: 7,
             name: 'index.html',
-            type: 'folder',
+            type: 'html',
             path: '',
             edit: false,
             file: 'html',
