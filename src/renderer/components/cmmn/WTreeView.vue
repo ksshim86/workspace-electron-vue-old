@@ -1,7 +1,11 @@
 <template>
-  <!-- <w-node :nodes="nodes" :depth="rootDepth">
-  </w-node> -->
-  <div>
+  <div class="w-tree-view" style="display: table-row;">
+    <div style="width:100%">
+      <v-btn icon small>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </div>
+    <v-divider />
     <w-node v-for="node in nodes" :nodes="node" :key="node.sid"></w-node>
   </div>
 </template>
@@ -16,24 +20,7 @@ export default {
     nodes: Array
   },
   data() {
-    return {
-      rootDepth: 0
-      // nodes: {
-      //   sid: 0,
-      //   name: 'root',
-      //   type: 'root',
-      //   path: '',
-      //   edit: false,
-      //   children: []
-      // }
-    }
-  },
-  created() {
-    // if (this.items) {
-    // this.items = Object.assign(this.items, this.initItemChildren(this.items))
-    // this.items.filter(item => this.nodes.children.push(item))
-    // this.nodes.children = this.items
-    // }
+    return {}
   },
   methods: {
     initItemChildren(items) {
@@ -51,5 +38,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.61);
+}
 </style>

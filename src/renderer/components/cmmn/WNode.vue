@@ -1,32 +1,23 @@
 <template>
-  <div 
-    :style="paddingLeft" 
-    :draggable="isDraggable" 
-    @dragstart.stop="dragstart" 
-    @dragover.stop="dragOver" 
-    @drop.stop="drop" 
-    @dragenter="dragEnter"
-  >
-    <div class="w-node" @click="handleNodeClick" style="display: flex;">
-      <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
-      <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
-      <div 
-        :class="['pr-3']" 
-        @contextmenu.prevent.stop="handleRightClicked"
-      >
-        <p :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
-      </div>
-      <div class="text-xs-center">
-        <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
-          <v-card flat>
-            <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
-            <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
-          </v-card>
-        </v-menu>
+  <div class="w-node">
+    <div class="wrapper" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @contextmenu.prevent.stop="handleRightClicked">
+      <div :style="paddingLeft" @click="handleNodeClick" style="display: flex;">
+        <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
+        <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
+        <div :class="['pr-3', 'pl-1']">
+          <p :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
+        </div>
       </div>
     </div>
-    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth">
-    </w-node>
+    <div class="text-xs-center">
+      <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
+        <v-card flat>
+          <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
+          <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
+        </v-card>
+      </v-menu>
+    </div>
+    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth" />
   </div>
 </template>
 
@@ -87,10 +78,6 @@ export default {
       this.$set(this.nodes, 'children', [])
     }
   },
-  updated() {
-    // this.nodeOpen()
-    // this.toggleFolderIcon()
-  },
   computed: {
     isDraggable() {
       return this.depth > 0 || this.nodes.type !== 'work'
@@ -105,7 +92,9 @@ export default {
       return this.depth + 1
     },
     paddingLeft() {
-      return this.depth === 0 ? '' : 'padding-left: 17px !important;'
+      const px = 17 * this.depth
+
+      return this.depth === 0 ? '' : `padding-left: ${px}px !important;`
     },
     iconClass() {
       let iconClass = ''
@@ -128,7 +117,6 @@ export default {
   },
   methods: {
     dragstart(event) {
-      // event.preventDefault()
       event.dataTransfer.effectAllowed = 'move'
 
       _fromNode = this
@@ -191,16 +179,9 @@ export default {
     },
     handleNodeClick() {
       this.nodeOpen()
-      // this.toggleFolderIcon()
     },
     nodeOpen() {
       this.isOpen = !this.isOpen && this.hasChildren
-    },
-    toggleFolderIcon() {
-      // watch로 바꾸는게 좋을듯
-      if (this.nodes.type === 'folder') {
-        this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
-      }
     },
     handleRightClicked(e) {
       if (prevRightClickedObj) prevRightClickedObj.isOptionsOpen = false
@@ -218,5 +199,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.w-node .wrapper {
+  cursor: pointer;
+}
+.w-node .wrapper:hover {
+  background-color: rgba(208, 230, 239, 0.5);
+}
+
+.w-node .wrapper .v-icon {
+  color: #34495e;
+}
 </style>

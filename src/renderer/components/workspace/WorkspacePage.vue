@@ -2,45 +2,9 @@
   <v-container fill-height fluid grid-list-xl class="pa-0">
 
     <v-card class="mr-3" min-width="200" width="200" style="height: 100%; overflow-x : auto; position: absolute; white-space: nowrap;">
-      <div>
-        <v-btn icon small>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </div>
-      <v-divider />
-
-      <!-- 
-        min-width: 200px;
-    width: 200px;
-    height: 100%;
-    overflow: auto;
-    position: absolute;
-    overflow-x: scroll;
-    white-space: nowrap;
-    
-        <v-treeview v-model="tree" :open="open" :items="items" activatable hoverable item-key="sid">
-        <template slot="label" slot-scope="{ item, open, leaf }">
-          <div v-if="!item.edit">{{item.name}}</div>
-          <div v-else-if="item.edit">
-            <v-text-field :label="item.name" />
-          </div>
-        </template>
-        <template slot="prepend" slot-scope="{ item, open, leaf }">
-          <v-icon v-if="!item.file">
-            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-          </v-icon>
-          <v-icon v-else>
-            {{ files[item.file] }}</v-icon>
-        </template>
-        <template slot="append" slot-scope="{ item, open, leaf, selected, indeterminate }">
-          <v-btn icon small class="ml-0">
-            <v-icon>mdi-dots-horizontal</v-icon>
-          </v-btn>
-        </template>
-      </v-treeview> -->
       <w-tree-view :nodes="items"></w-tree-view>
     </v-card>
-    <v-layout wrap wtest class="ma-0" style="height: 99.5%;">
+    <v-layout wrap wtest class="ma-0" style="height: 100%;">
       <v-flex md12 sm12 lg4 pt-0 mt-1>
         <v-card color="#27ae60" dark class="mb-1">
           <v-card-title class="title font-weight-medium">
@@ -172,7 +136,7 @@ export default {
           },
           {
             sid: 7,
-            name: 'index.html',
+            name: 'indexxxxxxxxxxxxxxxxxxxxxxxxxxx.html',
             type: 'html',
             path: '',
             edit: false,
@@ -183,7 +147,7 @@ export default {
       }
     ]
   }),
-  mounted() {},
+  mounted() { },
   methods: {
     onResize(x, y, width, height) {
       this.x = x
@@ -233,7 +197,7 @@ export default {
 ::-webkit-scrollbar-thumb {
   /* This is the EXACT color of Mac OS scrollbars. 
      Yes, I pulled out digital color meter */
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(43, 52, 56, 0.4);
 }
 ::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.61); /* Some darker color when you click it */
