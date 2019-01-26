@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid grid-list-xl class="pa-0">
 
-    <v-card class="mr-3" min-width="200" width="200" style="height: 100%; overflow-x : auto; position: absolute; white-space: nowrap;">
+    <v-card class="mr-3" min-width="200" width="200" style="height: 100%;">
       <w-tree-view :nodes="items"></w-tree-view>
     </v-card>
     <v-layout wrap wtest class="ma-0" style="height: 100%;">

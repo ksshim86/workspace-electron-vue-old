@@ -1,12 +1,14 @@
 <template>
-  <div class="w-tree-view" style="display: table-row;">
-    <div style="width:100%">
-      <v-btn icon small>
-        <v-icon>mdi-plus</v-icon>
+  <div class="w-tree-view">
+    <div :style="style.menu">
+      <v-btn class="ma-0" icon small>
+        <v-icon class="mdi mdi-collapse-all-outline" />
       </v-btn>
     </div>
     <v-divider />
-    <w-node v-for="node in nodes" :nodes="node" :key="node.sid"></w-node>
+    <div :style="style.wtreeview">
+      <w-node v-for="node in nodes" :nodes="node" :key="node.sid"></w-node>
+    </div>
   </div>
 </template>
 
@@ -20,19 +22,19 @@ export default {
     nodes: Array
   },
   data() {
-    return {}
-  },
-  methods: {
-    initItemChildren(items) {
-      items.map((item) => {
-        if (item.children === undefined) {
-          item.children = []
-        } else {
-          item.children = Object.assign(item.children, this.initItemChildren(item.children))
+    return {
+      style: {
+        menu: {
+          height: '25px'
+        },
+        wtreeview: {
+          'overflow-x': 'auto',
+          position: 'absolute',
+          'white-space': 'nowrap',
+          width: '200px',
+          height: 'calc(100% - 25px)'
         }
-        return item
-      })
-      return items
+      }
     }
   }
 }
