@@ -43,7 +43,8 @@ export default {
         }
       },
       collapseAll: false,
-      selectedWNode: {}
+      selectedWNode: {},
+      selectedNodeId: 0
     }
   },
   methods: {
@@ -57,13 +58,37 @@ export default {
       this.setSelectedNodeId(-1)
     },
     handleNewFolderClick() {
-      // 재귀함수로 같은 id를 찾아서 push 하면 될 듯
-      // const selectedNodeId = this.getSelectedNodeId()
-      // this.nodes.map((node) => {
-      //   if (selectedNodeId === node.sid) {
+      let selectedNode = {}
 
-      //   }
-      // })
+      this.selectedNodeId = this.getSelectedNodeId()
+
+      selectedNode = this.findSelectedNode(this.nodes)
+
+      console.log(selectedNode)
+    },
+    nodeCopy(node) {
+      return Object.assign({}, node)
+    },
+    findSelectedNode(nodes) {
+      let selectedNode = {}
+
+      // https://stackoverflow.com/questions/38132146/recursively-filter-array-of-objects
+
+      selectedNode = nodes.map(this.nodeCopy).filter(function f(node) {
+        let result = false
+
+        if (this.selectedNodeId === node.sid) {
+          return true
+        }
+
+        if (!!node.children && !!node.children.length) {
+          result = (node.children = node.children.map(this.nodeCopy).filter(f, this)).length
+        }
+
+        return result
+      }, this)
+
+      return selectedNode
     },
     emitPassWnode(wNode) {
       this.selectedWNode = wNode

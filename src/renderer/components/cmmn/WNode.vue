@@ -129,7 +129,7 @@ export default {
       }
     },
     getSelectedNodeId(newVal, oldVal) {
-      if (this._uid === newVal) {
+      if (this.nodes.sid === newVal) {
         this.isSelected = true
       } else {
         this.isSelected = false
