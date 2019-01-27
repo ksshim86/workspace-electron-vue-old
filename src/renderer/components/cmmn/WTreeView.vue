@@ -1,18 +1,25 @@
 <template>
   <div class="w-tree-view">
-    <div :style="style.menu">
-      <v-btn class="ma-0" icon small>
+    <div class="w-tree-view-menu" :style="style.menu">
+      <v-btn class="ma-0" icon small @click="handleCollapseAllClick">
         <v-icon class="mdi mdi-collapse-all-outline" />
+      </v-btn>
+      <v-btn class="ma-0" icon small @click="handleNewFolderClick">
+        <v-icon class="mdi mdi-folder-plus-outline" />
+      </v-btn>
+      <v-btn class="ma-0" icon small>
+        <v-icon class="mdi mdi-file-plus" />
       </v-btn>
     </div>
     <v-divider />
-    <div :style="style.wtreeview">
-      <w-node v-for="node in nodes" :nodes="node" :key="node.sid"></w-node>
+    <div class="w-tree-view-node-list" :style="style.wtreeview" @click="handleNodeListDivClicked">
+      <w-node ref="wNode99" v-for="node in nodes" :nodes="node" :key="node.sid" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassWnode="emitPassWnode"></w-node>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import WNode from './WNode'
 
 export default {
@@ -34,8 +41,35 @@ export default {
           width: '200px',
           height: 'calc(100% - 25px)'
         }
-      }
+      },
+      collapseAll: false,
+      selectedWNode: {}
     }
+  },
+  methods: {
+    handleCollapseAllClick() {
+      this.collapseAll = true
+    },
+    emitCollapseAllChange() {
+      this.collapseAll = false
+    },
+    handleNodeListDivClicked() {
+      this.setSelectedNodeId(-1)
+    },
+    handleNewFolderClick() {
+      // 재귀함수로 같은 id를 찾아서 push 하면 될 듯
+      // const selectedNodeId = this.getSelectedNodeId()
+      // this.nodes.map((node) => {
+      //   if (selectedNodeId === node.sid) {
+
+      //   }
+      // })
+    },
+    emitPassWnode(wNode) {
+      this.selectedWNode = wNode
+    },
+    ...mapGetters(['getSelectedNodeId']),
+    ...mapActions(['setSelectedNodeId'])
   }
 }
 </script>
@@ -58,5 +92,18 @@ export default {
 }
 ::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.61);
+}
+.w-tree-view-menu > * {
+  float: right;
+}
+.w-tree-view-menu i {
+  font-size: 20px;
+}
+
+.mdi-collapse-all-outline {
+  transform: scaleX(-1);
+  -moz-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  -ms-transform: scaleX(-1);
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="w-node">
-    <div class="wrapper" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @contextmenu.prevent.stop="handleRightClicked">
-      <div :style="paddingLeft" @click="handleNodeClick" style="display: flex;">
+    <div class="wrapper" :class="{select: isSelected}" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @contextmenu.prevent.stop="handleRightClicked">
+      <div :style="paddingLeft" @click.stop="handleNodeClick" style="display: flex;">
         <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
         <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
@@ -17,11 +17,13 @@
         </v-card>
       </v-menu>
     </div>
-    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth" />
+    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth" :collapseAll="collapseAll" />
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 let _fromNode = null
 let _toNode = null
 let prevRightClickedObj = null
@@ -45,7 +47,8 @@ export default {
     depth: {
       type: Number,
       default: 0
-    }
+    },
+    collapseAll: false
   },
   data() {
     return {
@@ -106,12 +109,30 @@ export default {
       iconClass = `mdi ${this.type.icons[this.nodes.type]}`
 
       return iconClass
-    }
+    },
+    ...mapGetters(['getSelectedNodeId'])
   },
   watch: {
     hasChildren() {
       if (!this.nodes.children.length) {
         this.isOpen = false
+      }
+    },
+    collapseAll(newVal, oldVal) {
+      if (!oldVal && newVal) {
+        this.isOpen = false
+      }
+    },
+    isOpen() {
+      if (this.isOpen) {
+        this.$emit('emitCollapseAllChange')
+      }
+    },
+    getSelectedNodeId(newVal, oldVal) {
+      if (this._uid === newVal) {
+        this.isSelected = true
+      } else {
+        this.isSelected = false
       }
     }
   },
@@ -178,6 +199,7 @@ export default {
       event.preventDefault()
     },
     handleNodeClick() {
+      this.setSelectedNodeId(this.nodes.sid)
       this.nodeOpen()
     },
     nodeOpen() {
@@ -194,7 +216,8 @@ export default {
       this.$nextTick(() => {
         this.isOptionsOpen = true
       })
-    }
+    },
+    ...mapActions(['setSelectedNodeId', 'setSelectedWNode'])
   }
 }
 </script>
@@ -205,6 +228,10 @@ export default {
 }
 .w-node .wrapper:hover {
   background-color: rgba(208, 230, 239, 0.5);
+}
+.w-node .wrapper.select {
+  background-color: rgba(208, 230, 239, 0.5);
+  /* color: red; */
 }
 
 .w-node .wrapper .v-icon {
