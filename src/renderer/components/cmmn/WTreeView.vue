@@ -13,7 +13,16 @@
     </div>
     <v-divider />
     <div class="w-tree-view-node-list" :style="style.wtreeview">
-      <w-node ref="wNode" v-for="node in nodes" :nodes="node" :key="node.id" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassSelectedWnode="emitPassSelectedWnode"></w-node>
+      <w-node 
+        ref="wNode" 
+        v-for="node in nodes" 
+        :nodes="node" 
+        :key="node.id" 
+        :collapseAll="collapseAll" 
+        @emitCollapseAllChange="emitCollapseAllChange" 
+        @emitPassSelectedWnode="emitPassSelectedWnode"
+      >
+      </w-node>
     </div>
   </div>
 </template>
@@ -43,8 +52,7 @@ export default {
           height: 'calc(100% - 25px)'
         }
       },
-      collapseAll: false,
-      selectedWNode: {}
+      collapseAll: false
     }
   },
   methods: {
@@ -69,7 +77,9 @@ export default {
         children: []
       }
 
-      if (this.selectedWNode && this.isCreateNewNode(this.selectedWNode.nodes.type)) {
+      if (this.selectedWNode) return
+
+      if (this.isCreateNewNode(this.selectedWNode.nodes.type)) {
         this.selectedWNode.nodes.children.push(newNode)
       } else {
         this.selectedWNode.$parent.nodes.children.push(newNode)

@@ -6,14 +6,7 @@
         <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
           <p v-if="!isEdit" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
-          <v-text-field
-            ref="textFieldForName"
-            v-if="isEdit"
-            :model="nodes.name"
-            required
-            hide-details
-            class="ma-0"
-          ></v-text-field>
+          <v-text-field ref="textFieldForName" v-if="isEdit" v-model="nodes.name" required hide-details class="ma-0"></v-text-field>
         </div>
       </div>
     </div>
@@ -25,7 +18,14 @@
         </v-card>
       </v-menu>
     </div>
-    <w-node v-show="isOpen" v-for="node in nodes.children" :nodes="node" :key="node.id" :depth="increaseDepth" :collapseAll="collapseAll" @emitPassSelectedWnode="emitPassSelectedWnode" />
+    <w-node v-show="isOpen" 
+      v-for="node in nodes.children" 
+      :nodes="node" :key="node.id" 
+      :depth="increaseDepth" 
+      :collapseAll="collapseAll" 
+      @emitPassSelectedWnode="emitPassSelectedWnode"
+      @emitChildNodeFilter="emitChildNodeFilter"
+    />
   </div>
 </template>
 
@@ -39,17 +39,19 @@ let _dragEnterNodeId = -1
 let _dragEnterStartTime = null
 
 export default {
-  name: 'w-node',
+  name: 'WNode',
   components: {},
   props: {
     nodes: {
       type: Object,
-      default: {
-        id: 0,
-        name: '',
-        type: '',
-        path: '',
-        children: []
+      default() {
+        return {
+          id: 0,
+          name: '',
+          type: '',
+          path: '',
+          children: []
+        }
       }
     },
     depth: {
@@ -112,7 +114,9 @@ export default {
       let iconClass = ''
 
       if (this.nodes.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen
+          ? 'mdi-folder-open'
+          : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.nodes.type]}`
@@ -143,13 +147,26 @@ export default {
       } else {
         this.isSelected = false
       }
+
+      if (
+        this.nodes.id === this.getNewNodeId &&
+        (newVal === -1 || this.nodes.id !== newVal)
+      ) {
+        this.isEdit = false
+
+        if (this.nodes.name === '') {
+          this.childNodeFilter()
+        }
+      }
     },
     getNewNodeId(newVal, oldVal) {
       if (this.nodes.id === newVal) {
         this.isEdit = true
-        // this.$refs.textFieldForName.$el.focus()
-        // 생성된 textfield focus 하는 기능 추가 필요
         this.$parent.isOpen = true
+
+        this.$nextTick(() => {
+          this.$refs.textFieldForName.focus()
+        })
       } else {
         this.isEdit = false
       }
@@ -167,7 +184,11 @@ export default {
       if (this.nodes.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
+        if (
+          _dragOverTime - _dragEnterStartTime >= 500 &&
+          !this.isOpen &&
+          this.hasChildren
+        ) {
           this.handleNodeClick()
         }
       } else {
@@ -239,6 +260,14 @@ export default {
       this.$nextTick(() => {
         this.isOptionsOpen = true
       })
+    },
+    childNodeFilter() {
+      this.$emit('emitChildNodeFilter', this.nodes.id)
+    },
+    emitChildNodeFilter(childId) {
+      this.nodes.children = this.nodes.children.filter(
+        child => child.id !== childId
+      )
     },
     ...mapActions(['setSelectedNodeId'])
   }
