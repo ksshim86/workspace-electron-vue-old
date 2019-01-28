@@ -1,5 +1,5 @@
 <template>
-  <div class="w-tree-view">
+  <div class="w-tree-view" @click="handleNodeListDivClicked">
     <div class="w-tree-view-menu" :style="style.menu">
       <v-btn class="ma-0" icon small @click="handleCollapseAllClick">
         <v-icon class="mdi mdi-collapse-all-outline" />
@@ -12,14 +12,14 @@
       </v-btn>
     </div>
     <v-divider />
-    <div class="w-tree-view-node-list" :style="style.wtreeview" @click="handleNodeListDivClicked">
-      <w-node ref="wNode99" v-for="node in nodes" :nodes="node" :key="node.sid" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassWnode="emitPassWnode"></w-node>
+    <div class="w-tree-view-node-list" :style="style.wtreeview">
+      <w-node ref="wNode" v-for="node in nodes" :nodes="node" :key="node.sid" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassSelectedWnode="emitPassSelectedWnode"></w-node>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import WNode from './WNode'
 
 export default {
@@ -43,8 +43,7 @@ export default {
         }
       },
       collapseAll: false,
-      selectedWNode: {},
-      selectedNodeId: 0
+      selectedWNode: {}
     }
   },
   methods: {
@@ -54,46 +53,33 @@ export default {
     emitCollapseAllChange() {
       this.collapseAll = false
     },
-    handleNodeListDivClicked() {
-      this.setSelectedNodeId(-1)
+    handleNodeListDivClicked(e) {
+      if (e.target.className === 'w-tree-view-node-list') {
+        this.setSelectedNodeId(-1)
+        this.selectedWNode = {}
+      }
     },
     handleNewFolderClick() {
-      let selectedNode = {}
+      const testNode = {
+        sid: 20,
+        name: '새로등록이다.png',
+        type: 'png',
+        path: '',
+        edit: false,
+        file: 'png',
+        children: []
+      }
 
-      this.selectedNodeId = this.getSelectedNodeId()
-
-      selectedNode = this.findSelectedNode(this.nodes)
-
-      console.log(selectedNode)
+      if (this.selectedWNode && this.selectedWNode.nodes.type === 'folder') {
+        this.selectedWNode.nodes.children.push(testNode)
+      } else {
+        console.log(this.selectedWNode)
+        // 선택된 노드가 폴더가 아닌 경우 부모를 찾는 로직이 필요
+      }
     },
-    nodeCopy(node) {
-      return Object.assign({}, node)
-    },
-    findSelectedNode(nodes) {
-      let selectedNode = {}
-
-      // https://stackoverflow.com/questions/38132146/recursively-filter-array-of-objects
-
-      selectedNode = nodes.map(this.nodeCopy).filter(function f(node) {
-        let result = false
-
-        if (this.selectedNodeId === node.sid) {
-          return true
-        }
-
-        if (!!node.children && !!node.children.length) {
-          result = (node.children = node.children.map(this.nodeCopy).filter(f, this)).length
-        }
-
-        return result
-      }, this)
-
-      return selectedNode
-    },
-    emitPassWnode(wNode) {
+    emitPassSelectedWnode(wNode) {
       this.selectedWNode = wNode
     },
-    ...mapGetters(['getSelectedNodeId']),
     ...mapActions(['setSelectedNodeId'])
   }
 }

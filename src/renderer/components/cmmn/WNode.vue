@@ -17,7 +17,7 @@
         </v-card>
       </v-menu>
     </div>
-    <w-node v-show="isOpen" v-for="nodes in nodes.children" :nodes="nodes" :key="nodes.sid" :depth="increaseDepth" :collapseAll="collapseAll" />
+    <w-node v-show="isOpen" v-for="node in nodes.children" :nodes="node" :key="node.sid" :depth="increaseDepth" :collapseAll="collapseAll" @emitPassSelectedWnode="emitPassSelectedWnode" />
   </div>
 </template>
 
@@ -200,7 +200,11 @@ export default {
     },
     handleNodeClick() {
       this.setSelectedNodeId(this.nodes.sid)
+      this.emitPassSelectedWnode(this)
       this.nodeOpen()
+    },
+    emitPassSelectedWnode(wNode) {
+      this.$emit('emitPassSelectedWnode', wNode)
     },
     nodeOpen() {
       this.isOpen = !this.isOpen && this.hasChildren
@@ -217,7 +221,7 @@ export default {
         this.isOptionsOpen = true
       })
     },
-    ...mapActions(['setSelectedNodeId', 'setSelectedWNode'])
+    ...mapActions(['setSelectedNodeId'])
   }
 }
 </script>
