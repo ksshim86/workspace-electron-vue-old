@@ -1,130 +1,244 @@
 <template>
-  <div 
-    :class="['my-2']" 
-    :draggable="isDraggable"
-    :allowDrop="isAllowDrop"
-    @dragstart.stop="dragstart" 
-    @dragover="dragover" 
-    @drop.stop="drop" 
-  >
-    <v-icon v-if="isFolder">mdi-menu-right</v-icon>
-    <v-icon v-if="!isClicked" :class="[isFolder ? '' : 'pl-4']" @dblclick="dblclick">mdi-folder</v-icon>
-    <v-icon v-if="isClicked" :class="[isFolder ? '' : 'pl-4']" @dblclick="dblclick">mdi-folder-open</v-icon>
-    <span :class="['title', 'font-weight-light']" @contextmenu.prevent.stop="handleRightClicked">{{items.name}}</span>
+  <div class="w-node">
+    <div class="wrapper" :class="{select: isSelected}" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @contextmenu.prevent.stop="handleRightClicked">
+      <div :style="paddingLeft" @click.stop="handleNodeClick" style="display: flex;">
+        <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
+        <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
+        <div :class="['pr-3', 'pl-1']">
+          <p :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
+        </div>
+      </div>
+    </div>
     <div class="text-xs-center">
-      <v-menu v-model="showMenu"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-      >
+      <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
         <v-card flat>
           <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
           <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
         </v-card>
       </v-menu>
     </div>
-    <!-- <v-btn icon small absolute right="">
-      <v-icon>mdi-dots-horizontal</v-icon>
-    </v-btn> -->
-    <w-node 
-      v-if="isFolder"
-      v-show="isDisplay"
-      :class="['pl-5']" 
-      v-for="items in items.children" 
-      :items="items" 
-      :key="items.sid"
-      :depth="increaseDepth"
-    >
-    </w-node>
+    <w-node v-show="isOpen" v-for="node in nodes.children" :nodes="node" :key="node.sid" :depth="increaseDepth" :collapseAll="collapseAll" @emitPassSelectedWnode="emitPassSelectedWnode" />
   </div>
 </template>
 
 <script>
-let fromItems = null
-let toItems = null
+import { mapGetters, mapActions } from 'vuex'
+
+let _fromNode = null
+let _toNode = null
 let prevRightClickedObj = null
+let _dragEnterNodeId = -1
+let _dragEnterStartTime = null
 
 export default {
-  name: 'WNode',
+  name: 'w-node',
   components: {},
   props: {
-    items: Object,
+    nodes: {
+      type: Object,
+      default: {
+        sid: 0,
+        name: '',
+        type: '',
+        path: '',
+        children: []
+      }
+    },
     depth: {
       type: Number,
       default: 0
-    }
+    },
+    collapseAll: false
   },
   data() {
     return {
-      isDraggable: false,
-      isDrag: false,
-      isClicked: false,
-      isDisplay: true,
-      showMenu: false,
-      x: 0,
-      y: 0
+      options: {
+        rename: false,
+        x: 0,
+        y: 0
+      },
+      isOpen: false,
+      isSelected: false,
+      isOptionsOpen: false,
+      type: {
+        icons: {
+          folder: 'mdi-folder',
+          work: 'mdi-developer-board',
+          html: 'mdi-language-html5',
+          js: 'mdi-nodejs',
+          json: 'mdi-json',
+          md: 'mdi-markdown',
+          pdf: 'mdi-file-pdf',
+          png: 'mdi-file-image',
+          txt: 'mdi-file-document-outline',
+          xls: 'mdi-file-excel'
+        }
+      }
     }
   },
-  beforeMount() {
-    if (this.depth > 1) this.isDraggable = true
+  created() {
+    if (!this.nodes.children) {
+      this.$set(this.nodes, 'children', [])
+    }
   },
   computed: {
-    isFolder() {
-      return this.items.children && this.items.children.length
+    isDraggable() {
+      return this.depth > 0 || this.nodes.type !== 'work'
     },
-    isAllowDrop() {
-      return this.depth > 0
+    isDrop() {
+      return this.nodes.type === 'folder' || this.nodes.type === 'work'
+    },
+    hasChildren() {
+      return !!this.nodes.children && !!this.nodes.children.length
     },
     increaseDepth() {
       return this.depth + 1
+    },
+    paddingLeft() {
+      const px = 17 * this.depth
+
+      return this.depth === 0 ? '' : `padding-left: ${px}px !important;`
+    },
+    iconClass() {
+      let iconClass = ''
+
+      if (this.nodes.type === 'folder') {
+        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+      }
+
+      iconClass = `mdi ${this.type.icons[this.nodes.type]}`
+
+      return iconClass
+    },
+    ...mapGetters(['getSelectedNodeId'])
+  },
+  watch: {
+    hasChildren() {
+      if (!this.nodes.children.length) {
+        this.isOpen = false
+      }
+    },
+    collapseAll(newVal, oldVal) {
+      if (!oldVal && newVal) {
+        this.isOpen = false
+      }
+    },
+    isOpen() {
+      if (this.isOpen) {
+        this.$emit('emitCollapseAllChange')
+      }
+    },
+    getSelectedNodeId(newVal, oldVal) {
+      if (this.nodes.sid === newVal) {
+        this.isSelected = true
+      } else {
+        this.isSelected = false
+      }
     }
   },
   methods: {
-    dragstart() {
-      // event.dataTransfer.setData('items', JSON.stringify(this.items))
-      fromItems = this
+    dragstart(event) {
+      event.dataTransfer.effectAllowed = 'move'
+
+      _fromNode = this
     },
-    dragover(event) {
+    dragOver(event) {
+      let _dragOverTime = null
+
+      if (this.nodes.sid === _dragEnterNodeId) {
+        _dragOverTime = new Date().getTime()
+
+        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
+          this.handleNodeClick()
+        }
+      } else {
+        _dragEnterStartTime = null
+      }
+
       event.preventDefault()
     },
-    drop() {
-      const pa = fromItems.$parent.items.children
+    dragEnter(event) {
+      if (!this.isOpen && this.hasChildren) {
+        _dragEnterNodeId = this.nodes.sid
 
-      if (this.isAllowDrop) {
-        toItems = this
+        _dragEnterStartTime = new Date().getTime()
+      }
+
+      event.preventDefault()
+    },
+    drop(event) {
+      if (this.isDrop) {
+        _toNode = this
 
         if (
-          fromItems.items.sid !== toItems.items.sid &&
-          fromItems.$parent.items.sid !== toItems.items.sid
+          _fromNode.nodes.sid !== _toNode.nodes.sid &&
+          _fromNode.$parent.nodes.sid !== _toNode.nodes.sid
         ) {
-          toItems.items.children.push(fromItems.items)
+          _toNode.nodes.children.push(_fromNode.nodes)
 
-          fromItems.$parent.items.children = pa.filter(item => item.sid !== fromItems.items.sid)
+          _fromNode.$parent.nodes.children = _fromNode.$parent.nodes.children.filter(
+            item => item.sid !== _fromNode.nodes.sid
+          )
 
-          console.log(pa)
+          _toNode.nodes.children.sort((a, b) => {
+            if (a.type === b.type) {
+              return a.name > b.name
+            }
+            if (a.type === 'folder' && b.type !== 'folder') {
+              return -1
+            }
+            if (a.type !== 'folder' && b.type === 'folder') {
+              return 1
+            }
+
+            return 0
+          })
         }
       }
+
+      event.preventDefault()
     },
-    dblclick() {
-      this.isClicked = !this.isClicked && this.items.children.length > 0
-      this.isDisplay = !this.isDisplay && this.items.children.length > 0
+    handleNodeClick() {
+      this.setSelectedNodeId(this.nodes.sid)
+      this.emitPassSelectedWnode(this)
+      this.nodeOpen()
+    },
+    emitPassSelectedWnode(wNode) {
+      this.$emit('emitPassSelectedWnode', wNode)
+    },
+    nodeOpen() {
+      this.isOpen = !this.isOpen && this.hasChildren
     },
     handleRightClicked(e) {
-      if (prevRightClickedObj) prevRightClickedObj.showMenu = false
+      if (prevRightClickedObj) prevRightClickedObj.isOptionsOpen = false
 
       prevRightClickedObj = this
 
-      this.x = e.clientX
-      this.y = e.clientY
+      this.options.x = e.clientX
+      this.options.y = e.clientY
 
       this.$nextTick(() => {
-        this.showMenu = true
+        this.isOptionsOpen = true
       })
-    }
+    },
+    ...mapActions(['setSelectedNodeId'])
   }
 }
 </script>
 
-<style scoped>
+<style>
+.w-node .wrapper {
+  cursor: pointer;
+}
+.w-node .wrapper:hover {
+  background-color: rgba(208, 230, 239, 0.5);
+}
+.w-node .wrapper.select {
+  background-color: rgba(208, 230, 239, 0.5);
+  /* color: red; */
+}
+
+.w-node .wrapper .v-icon {
+  color: #34495e;
+}
 </style>
