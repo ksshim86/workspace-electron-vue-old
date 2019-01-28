@@ -78,21 +78,21 @@ export default {
     tree: [],
     items: [
       {
-        sid: 1,
+        id: 1,
         name: '.git',
         type: 'work',
         path: '',
         edit: false
       },
       {
-        sid: 2,
+        id: 2,
         name: 'node_modules',
         type: 'work',
         path: '',
-        edit: true,
+        edit: false,
         children: [
           {
-            sid: 10,
+            id: 3,
             name: 'testtest',
             type: 'folder',
             path: '',
@@ -101,53 +101,50 @@ export default {
         ]
       },
       {
-        sid: 3,
+        id: 4,
         name: '전표',
         type: 'work',
         path: '',
         edit: false,
         children: [
           {
-            sid: 4,
+            id: 5,
             name: '템플릿',
             type: 'folder',
             path: '',
             edit: false,
             children: [
               {
-                sid: 5,
+                id: 6,
                 name: 'logo.png',
                 type: 'png',
                 path: '',
                 edit: false,
-                file: 'png',
                 children: []
               }
             ]
           },
           {
-            sid: 6,
+            id: 7,
             name: 'favicon.ico',
             type: 'png',
             path: '',
             edit: false,
-            file: 'png',
             children: []
           },
           {
-            sid: 7,
+            id: 8,
             name: 'indexxxxxxxxxxxxxxxxxxxxxxxxxxx.html',
             type: 'html',
             path: '',
             edit: false,
-            file: 'html',
             children: []
           }
         ]
       }
     ]
   }),
-  mounted() { },
+  mounted() {},
   methods: {
     onResize(x, y, width, height) {
       this.x = x

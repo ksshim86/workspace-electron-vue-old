@@ -13,7 +13,7 @@
     </div>
     <v-divider />
     <div class="w-tree-view-node-list" :style="style.wtreeview">
-      <w-node ref="wNode" v-for="node in nodes" :nodes="node" :key="node.sid" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassSelectedWnode="emitPassSelectedWnode"></w-node>
+      <w-node ref="wNode" v-for="node in nodes" :nodes="node" :key="node.id" :collapseAll="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" @emitPassSelectedWnode="emitPassSelectedWnode"></w-node>
     </div>
   </div>
 </template>
@@ -30,6 +30,7 @@ export default {
   },
   data() {
     return {
+      nextId: 9,
       style: {
         menu: {
           height: '25px'
@@ -60,27 +61,35 @@ export default {
       }
     },
     handleNewFolderClick() {
-      const testNode = {
-        sid: 20,
-        name: '새로등록이다.png',
-        type: 'png',
+      const newNode = {
+        id: this.nextId,
+        name: '',
+        type: 'folder',
         path: '',
-        edit: false,
-        file: 'png',
         children: []
       }
 
-      if (this.selectedWNode && this.selectedWNode.nodes.type === 'folder') {
-        this.selectedWNode.nodes.children.push(testNode)
+      if (this.selectedWNode && this.isCreateNewNode(this.selectedWNode.nodes.type)) {
+        this.selectedWNode.nodes.children.push(newNode)
       } else {
-        console.log(this.selectedWNode)
-        // 선택된 노드가 폴더가 아닌 경우 부모를 찾는 로직이 필요
+        this.selectedWNode.$parent.nodes.children.push(newNode)
       }
+
+      this.$nextTick(() => {
+        this.setNewNodeId(newNode.id)
+      })
+
+      this.nextId += 1
+    },
+    isCreateNewNode(type) {
+      const items = ['folder', 'work']
+
+      return items.find(item => type === item)
     },
     emitPassSelectedWnode(wNode) {
       this.selectedWNode = wNode
     },
-    ...mapActions(['setSelectedNodeId'])
+    ...mapActions(['setSelectedNodeId', 'setNewNodeId'])
   }
 }
 </script>

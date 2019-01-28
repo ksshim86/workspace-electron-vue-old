@@ -5,7 +5,15 @@
         <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
         <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
-          <p :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
+          <p v-if="!isEdit" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
+          <v-text-field
+            ref="textFieldForName"
+            v-if="isEdit"
+            :model="nodes.name"
+            required
+            hide-details
+            class="ma-0"
+          ></v-text-field>
         </div>
       </div>
     </div>
@@ -17,7 +25,7 @@
         </v-card>
       </v-menu>
     </div>
-    <w-node v-show="isOpen" v-for="node in nodes.children" :nodes="node" :key="node.sid" :depth="increaseDepth" :collapseAll="collapseAll" @emitPassSelectedWnode="emitPassSelectedWnode" />
+    <w-node v-show="isOpen" v-for="node in nodes.children" :nodes="node" :key="node.id" :depth="increaseDepth" :collapseAll="collapseAll" @emitPassSelectedWnode="emitPassSelectedWnode" />
   </div>
 </template>
 
@@ -37,7 +45,7 @@ export default {
     nodes: {
       type: Object,
       default: {
-        sid: 0,
+        id: 0,
         name: '',
         type: '',
         path: '',
@@ -60,6 +68,7 @@ export default {
       isOpen: false,
       isSelected: false,
       isOptionsOpen: false,
+      isEdit: false,
       type: {
         icons: {
           folder: 'mdi-folder',
@@ -110,7 +119,7 @@ export default {
 
       return iconClass
     },
-    ...mapGetters(['getSelectedNodeId'])
+    ...mapGetters(['getSelectedNodeId', 'getNewNodeId'])
   },
   watch: {
     hasChildren() {
@@ -129,10 +138,20 @@ export default {
       }
     },
     getSelectedNodeId(newVal, oldVal) {
-      if (this.nodes.sid === newVal) {
+      if (this.nodes.id === newVal) {
         this.isSelected = true
       } else {
         this.isSelected = false
+      }
+    },
+    getNewNodeId(newVal, oldVal) {
+      if (this.nodes.id === newVal) {
+        this.isEdit = true
+        // this.$refs.textFieldForName.$el.focus()
+        // 생성된 textfield focus 하는 기능 추가 필요
+        this.$parent.isOpen = true
+      } else {
+        this.isEdit = false
       }
     }
   },
@@ -145,7 +164,7 @@ export default {
     dragOver(event) {
       let _dragOverTime = null
 
-      if (this.nodes.sid === _dragEnterNodeId) {
+      if (this.nodes.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
         if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
@@ -159,7 +178,7 @@ export default {
     },
     dragEnter(event) {
       if (!this.isOpen && this.hasChildren) {
-        _dragEnterNodeId = this.nodes.sid
+        _dragEnterNodeId = this.nodes.id
 
         _dragEnterStartTime = new Date().getTime()
       }
@@ -171,13 +190,13 @@ export default {
         _toNode = this
 
         if (
-          _fromNode.nodes.sid !== _toNode.nodes.sid &&
-          _fromNode.$parent.nodes.sid !== _toNode.nodes.sid
+          _fromNode.nodes.id !== _toNode.nodes.id &&
+          _fromNode.$parent.nodes.id !== _toNode.nodes.id
         ) {
           _toNode.nodes.children.push(_fromNode.nodes)
 
           _fromNode.$parent.nodes.children = _fromNode.$parent.nodes.children.filter(
-            item => item.sid !== _fromNode.nodes.sid
+            item => item.id !== _fromNode.nodes.id
           )
 
           _toNode.nodes.children.sort((a, b) => {
@@ -199,7 +218,7 @@ export default {
       event.preventDefault()
     },
     handleNodeClick() {
-      this.setSelectedNodeId(this.nodes.sid)
+      this.setSelectedNodeId(this.nodes.id)
       this.emitPassSelectedWnode(this)
       this.nodeOpen()
     },
@@ -237,8 +256,16 @@ export default {
   background-color: rgba(208, 230, 239, 0.5);
   /* color: red; */
 }
-
 .w-node .wrapper .v-icon {
   color: #34495e;
+}
+.v-text-field,
+.v-text-field div {
+  margin: 0;
+  padding: 0;
+}
+.v-text-field input {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 </style>
