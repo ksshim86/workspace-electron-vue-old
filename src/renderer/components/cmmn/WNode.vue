@@ -114,9 +114,7 @@ export default {
       let iconClass = ''
 
       if (this.nodes.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen
-          ? 'mdi-folder-open'
-          : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.nodes.type]}`
@@ -148,10 +146,7 @@ export default {
         this.isSelected = false
       }
 
-      if (
-        this.nodes.id === this.getNewNodeId &&
-        (newVal === -1 || this.nodes.id !== newVal)
-      ) {
+      if (this.nodes.id === this.getNewNodeId && (newVal === -1 || this.nodes.id !== newVal)) {
         this.isEdit = false
 
         if (this.nodes.name === '') {
@@ -172,6 +167,9 @@ export default {
       }
     }
   },
+  updated() {
+    console.log(`wnode-${this.nodes.name} updated`)
+  },
   methods: {
     dragstart(event) {
       event.dataTransfer.effectAllowed = 'move'
@@ -184,11 +182,7 @@ export default {
       if (this.nodes.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (
-          _dragOverTime - _dragEnterStartTime >= 500 &&
-          !this.isOpen &&
-          this.hasChildren
-        ) {
+        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
           this.handleNodeClick()
         }
       } else {
@@ -265,9 +259,7 @@ export default {
       this.$emit('emitChildNodeFilter', this.nodes.id)
     },
     emitChildNodeFilter(childId) {
-      this.nodes.children = this.nodes.children.filter(
-        child => child.id !== childId
-      )
+      this.nodes.children = this.nodes.children.filter(child => child.id !== childId)
     },
     ...mapActions(['setSelectedNodeId'])
   }

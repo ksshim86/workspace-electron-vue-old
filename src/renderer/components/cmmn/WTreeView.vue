@@ -16,7 +16,7 @@
       <w-node 
         ref="wNode" 
         v-for="node in nodes" 
-        :nodes="node" 
+        :nodes.sync="node" 
         :key="node.id" 
         :collapseAll="collapseAll" 
         @emitCollapseAllChange="emitCollapseAllChange" 
@@ -52,8 +52,17 @@ export default {
           height: 'calc(100% - 25px)'
         }
       },
-      collapseAll: false
+      collapseAll: false,
+      selectedWNode: {}
     }
+  },
+  watch: {
+    nodes() {
+      console.log('treeview nodes watch')
+    }
+  },
+  updated() {
+    console.log('treeview updated')
   },
   methods: {
     handleCollapseAllClick() {
@@ -77,7 +86,7 @@ export default {
         children: []
       }
 
-      if (this.selectedWNode) return
+      if (!this.selectedWNode.nodes) return
 
       if (this.isCreateNewNode(this.selectedWNode.nodes.type)) {
         this.selectedWNode.nodes.children.push(newNode)
