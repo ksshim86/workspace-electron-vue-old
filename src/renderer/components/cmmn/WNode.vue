@@ -11,7 +11,13 @@
       </div>
     </div>
     <div class="text-xs-center">
-      <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
+      <v-menu 
+        v-model="isOptionsOpen" 
+        :position-x="options.x" 
+        :position-y="options.y" 
+        absolute 
+        offset-y
+      >
         <v-card flat>
           <v-card-title class="ma-0 py-1 px-2">AAAA</v-card-title>
           <v-card-title class="ma-0 py-1 px-2">BBBB</v-card-title>
@@ -20,7 +26,9 @@
     </div>
     <w-node v-show="isOpen" 
       v-for="node in nodes.children" 
-      :nodes="node" :key="node.id" 
+      :nodes="node"
+      :parentNodes="nodes"
+      :key="node.id" 
       :depth="increaseDepth" 
       :collapseAll="collapseAll" 
       @emitPassSelectedWnode="emitPassSelectedWnode"
@@ -43,6 +51,18 @@ export default {
   components: {},
   props: {
     nodes: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          name: '',
+          type: '',
+          path: '',
+          children: []
+        }
+      }
+    },
+    parentNodes: {
       type: Object,
       default() {
         return {
@@ -92,6 +112,15 @@ export default {
       this.$set(this.nodes, 'children', [])
     }
   },
+  mounted() {
+    if (this.nodes.id === this.getNextNodeId) {
+      this.isEdit = true
+
+      this.$nextTick(() => {
+        this.$refs.textFieldForName.focus()
+      })
+    }
+  },
   computed: {
     isDraggable() {
       return this.depth > 0 || this.nodes.type !== 'work'
@@ -121,7 +150,13 @@ export default {
 
       return iconClass
     },
-    ...mapGetters(['getSelectedNodeId', 'getNewNodeId'])
+    ...mapGetters([
+      'getNextNodeId',
+      'getSelectedNodeId',
+      'getNewNodeId',
+      'getSelectedWNode',
+      'getSelectedParentWNode'
+    ])
   },
   watch: {
     hasChildren() {
@@ -151,6 +186,8 @@ export default {
 
         if (this.nodes.name === '') {
           this.childNodeFilter()
+        } else {
+          this.setNextNodeId()
         }
       }
     },
@@ -173,7 +210,7 @@ export default {
   methods: {
     dragstart(event) {
       event.dataTransfer.effectAllowed = 'move'
-
+      this.nodes.name = 'dragggggg'
       _fromNode = this
     },
     dragOver(event) {
@@ -233,12 +270,16 @@ export default {
       event.preventDefault()
     },
     handleNodeClick() {
-      this.setSelectedNodeId(this.nodes.id)
-      this.emitPassSelectedWnode(this)
+      // 테스트를 위해 주석 원래 사용하는 로직
+      // this.setSelectedNodeId(this.nodes.id)
+
+      // this.setSelectedWNode(this.nodes)
+      // this.setSelectedParentWNode(this.parentNodes)
+
       this.nodeOpen()
     },
-    emitPassSelectedWnode(wNode) {
-      this.$emit('emitPassSelectedWnode', wNode)
+    emitPassSelectedWnode(nodes, parentNodes) {
+      this.$emit('emitPassSelectedWnode', nodes, parentNodes)
     },
     nodeOpen() {
       this.isOpen = !this.isOpen && this.hasChildren
@@ -261,7 +302,12 @@ export default {
     emitChildNodeFilter(childId) {
       this.nodes.children = this.nodes.children.filter(child => child.id !== childId)
     },
-    ...mapActions(['setSelectedNodeId'])
+    ...mapActions([
+      'setNextNodeId',
+      'setSelectedNodeId',
+      'setSelectedWNode',
+      'setSelectedParentWNode'
+    ])
   }
 }
 </script>

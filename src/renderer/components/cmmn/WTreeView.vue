@@ -7,7 +7,7 @@
       <v-btn class="ma-0" icon small @click="handleNewFolderClick">
         <v-icon class="mdi mdi-folder-plus-outline" />
       </v-btn>
-      <v-btn class="ma-0" icon small>
+      <v-btn class="ma-0" icon small @click="handleNewTemplateClick">
         <v-icon class="mdi mdi-file-plus" />
       </v-btn>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WNode from './WNode'
 
 export default {
@@ -39,7 +39,6 @@ export default {
   },
   data() {
     return {
-      nextId: 9,
       style: {
         menu: {
           height: '25px'
@@ -53,7 +52,8 @@ export default {
         }
       },
       collapseAll: false,
-      selectedWNode: {}
+      selectedWNode: {},
+      selectedParentNodes: {}
     }
   },
   watch: {
@@ -73,42 +73,50 @@ export default {
     },
     handleNodeListDivClicked(e) {
       if (e.target.className === 'w-tree-view-node-list') {
-        this.setSelectedNodeId(-1)
-        this.selectedWNode = {}
+        // this.setSelectedNodeId(-1)
+        // this.selectedWNode = {}
       }
     },
     handleNewFolderClick() {
       const newNode = {
-        id: this.nextId,
+        id: this.getNextNodeId(),
         name: '',
         type: 'folder',
         path: '',
         children: []
       }
 
-      if (!this.selectedWNode.nodes) return
+      const selectedWNode = Object.assign({}, this.getSelectedWNode())
 
-      if (this.isCreateNewNode(this.selectedWNode.nodes.type)) {
-        this.selectedWNode.nodes.children.push(newNode)
+      if (!Object.entries(selectedWNode).length) return
+
+      if (this.isCreateNewNode(selectedWNode.type)) {
+        this.setSelectedWNodeChildPush(newNode)
       } else {
-        this.selectedWNode.$parent.nodes.children.push(newNode)
+        this.setSelectedParentWNodeChildPush(newNode)
       }
 
-      this.$nextTick(() => {
-        this.setNewNodeId(newNode.id)
-      })
-
-      this.nextId += 1
+      this.$nextTick(() => {})
     },
+    handleNewTemplateClick() {},
     isCreateNewNode(type) {
       const items = ['folder', 'work']
 
       return items.find(item => type === item)
     },
-    emitPassSelectedWnode(wNode) {
+    emitPassSelectedWnode(wNode, parentNodes) {
       this.selectedWNode = wNode
+      this.selectedParentNodes = parentNodes
     },
-    ...mapActions(['setSelectedNodeId', 'setNewNodeId'])
+    ...mapGetters(['getNextNodeId', 'getSelectedWNode', 'getSelectedParentWNode']),
+    ...mapActions([
+      'setSelectedNodeId',
+      'setNewNodeId',
+      'setSelectedWNode',
+      'setSelectedParentWNode',
+      'setSelectedWNodeChildPush',
+      'setSelectedParentWNodeChildPush'
+    ])
   }
 }
 </script>
