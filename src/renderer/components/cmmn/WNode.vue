@@ -5,8 +5,8 @@
         <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
         <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
-          <p v-if="!isEdit" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{nodes.name}}</p>
-          <v-text-field ref="textFieldForName" v-if="isEdit" v-model="nodes.name" required hide-details class="ma-0"></v-text-field>
+          <p v-if="!isEdit" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{wNode.name}}</p>
+          <v-text-field ref="textFieldForName" v-if="isEdit" v-model="wNode.name" required hide-details class="ma-0"></v-text-field>
         </div>
       </div>
     </div>
@@ -25,10 +25,12 @@
       </v-menu>
     </div>
     <w-node v-show="isOpen" 
-      v-for="node in nodes.children" 
-      :nodes="node"
-      :parentNodes="nodes"
-      :key="node.id" 
+      v-for="(child, index) in wNode.children" 
+      :wNode="child"
+      :parentWNodeIndex="index"
+      :parentWNodeIds="parentWNodeIdsAndWNodeId"
+      :parentWNodeIndexs="parentWNodeIndexsAndWNodeIndex"
+      :key="child.id" 
       :depth="increaseDepth" 
       :collapseAll="collapseAll" 
       @emitPassSelectedWnode="emitPassSelectedWnode"
@@ -38,10 +40,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-let _fromNode = null
-let _toNode = null
 let prevRightClickedObj = null
 let _dragEnterNodeId = -1
 let _dragEnterStartTime = null
@@ -50,7 +50,20 @@ export default {
   name: 'WNode',
   components: {},
   props: {
-    nodes: {
+    parentWNodeIds: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    parentWNodeIndex: 0,
+    parentWNodeIndexs: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    wNode: {
       type: Object,
       default() {
         return {
@@ -108,12 +121,12 @@ export default {
     }
   },
   created() {
-    if (!this.nodes.children) {
-      this.$set(this.nodes, 'children', [])
+    if (!this.wNode.children) {
+      this.$set(this.wNode, 'children', [])
     }
   },
   mounted() {
-    if (this.nodes.id === this.getNextNodeId) {
+    if (this.wNode.id === this.getNextNodeId) {
       this.isEdit = true
 
       this.$nextTick(() => {
@@ -122,14 +135,37 @@ export default {
     }
   },
   computed: {
+    parentWNodeIdsAndWNodeId() {
+      let arr = []
+
+      arr = arr.concat(this.parentWNodeIds)
+      arr.push(this.wNode.id)
+
+      return arr
+    },
+    parentWNodeIndexsAndWNodeIndex() {
+      let arr = []
+
+      arr = arr.concat(this.parentWNodeIndexs)
+      arr.push(this.parentWNodeIndex)
+
+      return arr
+    },
     isDraggable() {
-      return this.depth > 0 || this.nodes.type !== 'work'
+      return this.depth > 0 || this.wNode.type !== 'work'
     },
     isDrop() {
-      return this.nodes.type === 'folder' || this.nodes.type === 'work'
+      const { wNode, parentWNodeId } = this.GET_DRAG_W_NODE
+      const dropTarget = this.wNode
+
+      return (
+        (dropTarget.type === 'folder' || dropTarget.type === 'work') &&
+        wNode.id !== dropTarget.id &&
+        parentWNodeId !== dropTarget.id
+      )
     },
     hasChildren() {
-      return !!this.nodes.children && !!this.nodes.children.length
+      return !!this.wNode.children && !!this.wNode.children.length
     },
     increaseDepth() {
       return this.depth + 1
@@ -142,11 +178,13 @@ export default {
     iconClass() {
       let iconClass = ''
 
-      if (this.nodes.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+      if (this.wNode.type === 'folder') {
+        iconClass = this.type.icons.folder = this.isOpen
+          ? 'mdi-folder-open'
+          : 'mdi-folder'
       }
 
-      iconClass = `mdi ${this.type.icons[this.nodes.type]}`
+      iconClass = `mdi ${this.type.icons[this.wNode.type]}`
 
       return iconClass
     },
@@ -155,12 +193,13 @@ export default {
       'getSelectedNodeId',
       'getNewNodeId',
       'getSelectedWNode',
-      'getSelectedParentWNode'
+      'getSelectedParentWNode',
+      'GET_DRAG_W_NODE'
     ])
   },
   watch: {
     hasChildren() {
-      if (!this.nodes.children.length) {
+      if (!this.wNode.children.length) {
         this.isOpen = false
       }
     },
@@ -175,16 +214,19 @@ export default {
       }
     },
     getSelectedNodeId(newVal, oldVal) {
-      if (this.nodes.id === newVal) {
+      if (this.wNode.id === newVal) {
         this.isSelected = true
       } else {
         this.isSelected = false
       }
 
-      if (this.nodes.id === this.getNewNodeId && (newVal === -1 || this.nodes.id !== newVal)) {
+      if (
+        this.wNode.id === this.getNewNodeId &&
+        (newVal === -1 || this.wNode.id !== newVal)
+      ) {
         this.isEdit = false
 
-        if (this.nodes.name === '') {
+        if (this.wNode.name === '') {
           this.childNodeFilter()
         } else {
           this.setNextNodeId()
@@ -192,7 +234,7 @@ export default {
       }
     },
     getNewNodeId(newVal, oldVal) {
-      if (this.nodes.id === newVal) {
+      if (this.wNode.id === newVal) {
         this.isEdit = true
         this.$parent.isOpen = true
 
@@ -205,21 +247,31 @@ export default {
     }
   },
   updated() {
-    console.log(`wnode-${this.nodes.name} updated`)
+    console.log(`wnode-${this.wNode.name} updated`)
   },
   methods: {
     dragstart(event) {
+      const dragWNode = Object.assign({}, this.wNode)
+      const len = this.parentWNodeIds.length
+
       event.dataTransfer.effectAllowed = 'move'
-      this.nodes.name = 'dragggggg'
-      _fromNode = this
+
+      this.SET_DRAG_W_NODE({
+        wNode: dragWNode,
+        parentWNodeId: this.parentWNodeIds[len - 1]
+      })
     },
     dragOver(event) {
       let _dragOverTime = null
 
-      if (this.nodes.id === _dragEnterNodeId) {
+      if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
+        if (
+          _dragOverTime - _dragEnterStartTime >= 500 &&
+          !this.isOpen &&
+          this.hasChildren
+        ) {
           this.handleNodeClick()
         }
       } else {
@@ -230,7 +282,7 @@ export default {
     },
     dragEnter(event) {
       if (!this.isOpen && this.hasChildren) {
-        _dragEnterNodeId = this.nodes.id
+        _dragEnterNodeId = this.wNode.id
 
         _dragEnterStartTime = new Date().getTime()
       }
@@ -239,47 +291,45 @@ export default {
     },
     drop(event) {
       if (this.isDrop) {
-        _toNode = this
+        // _toNode.wNode.children.push(_fromNode.wNode)
+        this.SET_DROP_W_NODE({
+          id: this.wNode.id,
+          parentWNodeIds: this.parentWNodeIds,
+          parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
+        })
 
-        if (
-          _fromNode.nodes.id !== _toNode.nodes.id &&
-          _fromNode.$parent.nodes.id !== _toNode.nodes.id
-        ) {
-          _toNode.nodes.children.push(_fromNode.nodes)
+        // _fromNode.$parent.wNode.children = _fromNode.$parent.wNode.children.filter(
+        //   item => item.id !== _fromNode.wNode.id
+        // )
 
-          _fromNode.$parent.nodes.children = _fromNode.$parent.nodes.children.filter(
-            item => item.id !== _fromNode.nodes.id
-          )
+        // _toNode.wNode.children.sort((a, b) => {
+        //   if (a.type === b.type) {
+        //     return a.name > b.name
+        //   }
+        //   if (a.type === 'folder' && b.type !== 'folder') {
+        //     return -1
+        //   }
+        //   if (a.type !== 'folder' && b.type === 'folder') {
+        //     return 1
+        //   }
 
-          _toNode.nodes.children.sort((a, b) => {
-            if (a.type === b.type) {
-              return a.name > b.name
-            }
-            if (a.type === 'folder' && b.type !== 'folder') {
-              return -1
-            }
-            if (a.type !== 'folder' && b.type === 'folder') {
-              return 1
-            }
-
-            return 0
-          })
-        }
+        //   return 0
+        // })
       }
 
       event.preventDefault()
     },
     handleNodeClick() {
       // 테스트를 위해 주석 원래 사용하는 로직
-      // this.setSelectedNodeId(this.nodes.id)
+      // this.setSelectedNodeId(this.wNode.id)
 
-      // this.setSelectedWNode(this.nodes)
+      // this.setSelectedWNode(this.wNode)
       // this.setSelectedParentWNode(this.parentNodes)
 
       this.nodeOpen()
     },
-    emitPassSelectedWnode(nodes, parentNodes) {
-      this.$emit('emitPassSelectedWnode', nodes, parentNodes)
+    emitPassSelectedWnode(wNode, parentNodes) {
+      this.$emit('emitPassSelectedWnode', wNode, parentNodes)
     },
     nodeOpen() {
       this.isOpen = !this.isOpen && this.hasChildren
@@ -297,11 +347,14 @@ export default {
       })
     },
     childNodeFilter() {
-      this.$emit('emitChildNodeFilter', this.nodes.id)
+      this.$emit('emitChildNodeFilter', this.wNode.id)
     },
     emitChildNodeFilter(childId) {
-      this.nodes.children = this.nodes.children.filter(child => child.id !== childId)
+      this.wNode.children = this.wNode.children.filter(
+        child => child.id !== childId
+      )
     },
+    ...mapMutations(['SET_DRAG_W_NODE', 'SET_DROP_W_NODE']),
     ...mapActions([
       'setNextNodeId',
       'setSelectedNodeId',

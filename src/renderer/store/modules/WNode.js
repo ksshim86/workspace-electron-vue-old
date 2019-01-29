@@ -9,14 +9,31 @@ const state = {
     path: '',
     children: []
   },
-  selectedParentWNode: {}
+  selectedParentWNode: {},
+  dragWNode: {
+    wNode: {
+      id: 0,
+      name: '',
+      type: '',
+      path: '',
+      children: []
+    },
+    parentWNodeId: 0
+  },
+  dropWNode: {
+    id: 0,
+    parentWNodeIndex: 0,
+    parentWNodeIndexs: []
+  }
 }
 const getters = {
   getNextNodeId: state => state.nextNodeId,
   getSelectedNodeId: state => state.selectedNodeId,
   getNewNodeId: state => state.newNodeId,
   getSelectedWNode: state => state.selectedWNode,
-  getSelectedParentWNode: state => state.selectedParentWNode
+  getSelectedParentWNode: state => state.selectedParentWNode,
+  GET_DRAG_W_NODE: state => state.dragWNode,
+  GET_DROP_W_NODE: state => state.dropWNode
 }
 
 const mutations = {
@@ -40,6 +57,12 @@ const mutations = {
   },
   setSelectedParentWNodeChildPush(state, value) {
     state.selectedParentWNode.children.push(value)
+  },
+  SET_DRAG_W_NODE: (state, value) => {
+    state.dragWNode = value
+  },
+  SET_DROP_W_NODE: (state, value) => {
+    state.dropWNode = value
   }
 }
 
@@ -64,6 +87,9 @@ const actions = {
   },
   setSelectedParentWNodeChildPush: ({ commit }, payload) => {
     commit('setSelectedParentWNodeChildPush', payload)
+  },
+  SET_DRAG_W_NODE: ({ commit }, payload) => {
+    commit('SET_DRAG_W_NODE', payload)
   }
 }
 

@@ -15,8 +15,9 @@
     <div class="w-tree-view-node-list" :style="style.wtreeview">
       <w-node 
         ref="wNode" 
-        v-for="node in nodes" 
-        :nodes.sync="node" 
+        v-for="(node, index) in nodes" 
+        :wNode.sync="node"
+        :parentWNodeIndex="index"
         :key="node.id" 
         :collapseAll="collapseAll" 
         @emitCollapseAllChange="emitCollapseAllChange" 
@@ -56,15 +57,44 @@ export default {
       selectedParentNodes: {}
     }
   },
+  computed: {
+    ...mapGetters({
+      doneDrop: 'GET_DROP_W_NODE',
+      dragWNode: 'GET_DRAG_W_NODE'
+    })
+  },
   watch: {
     nodes() {
       console.log('treeview nodes watch')
+    },
+    doneDrop(newVal, oldVal) {
+      console.log(newVal)
+      this.pushChild(newVal)
     }
   },
   updated() {
     console.log('treeview updated')
   },
   methods: {
+    pushChild(dropWNode) {
+      const child = this.dragWNode.wNode
+      // const dropWNodeId = dropWNode.id
+      // const parentWNodeIds = dropWNode.parentWNodeIds
+      const { parentWNodeIndexs } = dropWNode
+      let index = parentWNodeIndexs[0]
+      let node = this.nodes[index].children
+
+      // bug: parentWNodeIndexs.length가 1개일때의 예외 필요
+      for (let i = 1; i < parentWNodeIndexs.length; i += 1) {
+        index = parentWNodeIndexs[i]
+
+        if (i < parentWNodeIndexs.legnth - 1) {
+          node = node[index].children
+        }
+      }
+
+      node[index].children.push(child)
+    },
     handleCollapseAllClick() {
       this.collapseAll = true
     },
@@ -108,7 +138,11 @@ export default {
       this.selectedWNode = wNode
       this.selectedParentNodes = parentNodes
     },
-    ...mapGetters(['getNextNodeId', 'getSelectedWNode', 'getSelectedParentWNode']),
+    ...mapGetters([
+      'getNextNodeId',
+      'getSelectedWNode',
+      'getSelectedParentWNode'
+    ]),
     ...mapActions([
       'setSelectedNodeId',
       'setNewNodeId',
