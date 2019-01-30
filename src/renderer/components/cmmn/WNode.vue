@@ -133,13 +133,13 @@ export default {
     this.wNode = Object.assign(this.wNode, this.nodes)
   },
   mounted() {
-    if (this.wNode.id === this.getNextNodeId) {
-      this.isEdit = true
+    // if (this.wNode.id === this.getNextNodeId) {
+    //   this.isEdit = true
 
-      this.$nextTick(() => {
-        this.$refs.textFieldForName.focus()
-      })
-    }
+    //   this.$nextTick(() => {
+    //     this.$refs.textFieldForName.focus()
+    //   })
+    // }
   },
   computed: {
     parentWNodeIdsAndWNodeId() {

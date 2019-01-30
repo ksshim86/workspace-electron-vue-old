@@ -192,7 +192,11 @@ export default {
       this.selectedWNode = wNode
       this.selectedParentNodes = parentNodes
     },
-    ...mapGetters(['getNextNodeId', 'getSelectedWNode', 'getSelectedParentWNode']),
+    ...mapGetters([
+      'getNextNodeId',
+      'getSelectedWNode',
+      'getSelectedParentWNode'
+    ]),
     ...mapActions([
       'setSelectedNodeId',
       'setNewNodeId',
