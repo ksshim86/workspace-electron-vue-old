@@ -1,12 +1,24 @@
 <template>
-  <div class="w-node">
+  <li class="w-node">
     <div class="wrapper" :class="{select: isSelected}" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @contextmenu.prevent.stop="handleRightClicked">
       <div :style="paddingLeft" @click.stop="handleNodeClick" style="display: flex;">
         <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
         <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
-          <p v-if="!isEdit" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">{{wNode.name}}</p>
-          <v-text-field ref="textFieldForName" v-if="isEdit" v-model="wNode.name" required hide-details class="ma-0"></v-text-field>
+          <p 
+            v-if="!isEdit" 
+            :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']"
+          >
+            {{wNode.name}}
+          </p>
+          <v-text-field 
+            ref="textFieldForName" 
+            v-if="isEdit" 
+            v-model="wNode.name" 
+            required 
+            hide-details 
+            class="ma-0"
+          />
         </div>
       </div>
     </div>
@@ -25,18 +37,18 @@
       </v-menu>
     </div>
     <w-node v-show="isOpen" 
-      v-for="(child, index) in wNode.children" 
-      :wNode="child"
+      v-for="(node, index) in nodes.children" 
+      :nodes="node"
       :parentWNodeIndex="index"
       :parentWNodeIds="parentWNodeIdsAndWNodeId"
       :parentWNodeIndexs="parentWNodeIndexsAndWNodeIndex"
-      :key="child.id" 
+      :key="node.id" 
       :depth="increaseDepth" 
       :collapseAll="collapseAll" 
       @emitPassSelectedWnode="emitPassSelectedWnode"
       @emitChildNodeFilter="emitChildNodeFilter"
     />
-  </div>
+  </li>
 </template>
 
 <script>
@@ -52,18 +64,14 @@ export default {
   props: {
     parentWNodeIds: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     },
     parentWNodeIndex: 0,
     parentWNodeIndexs: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     },
-    wNode: {
+    nodes: {
       type: Object,
       default() {
         return {
@@ -95,6 +103,7 @@ export default {
   },
   data() {
     return {
+      wNode: this.nodes,
       options: {
         rename: false,
         x: 0,
@@ -121,9 +130,7 @@ export default {
     }
   },
   created() {
-    if (!this.wNode.children) {
-      this.$set(this.wNode, 'children', [])
-    }
+    this.wNode = Object.assign(this.wNode, this.nodes)
   },
   mounted() {
     if (this.wNode.id === this.getNextNodeId) {
@@ -179,9 +186,7 @@ export default {
       let iconClass = ''
 
       if (this.wNode.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen
-          ? 'mdi-folder-open'
-          : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.wNode.type]}`
@@ -214,16 +219,13 @@ export default {
       }
     },
     getSelectedNodeId(newVal, oldVal) {
-      if (this.wNode.id === newVal) {
-        this.isSelected = true
-      } else {
-        this.isSelected = false
-      }
+      // if (this.wNode.id === newVal) {
+      //   this.isSelected = true
+      // } else {
+      //   this.isSelected = false
+      // }
 
-      if (
-        this.wNode.id === this.getNewNodeId &&
-        (newVal === -1 || this.wNode.id !== newVal)
-      ) {
+      if (this.wNode.id === this.getNewNodeId && (newVal === -1 || this.wNode.id !== newVal)) {
         this.isEdit = false
 
         if (this.wNode.name === '') {
@@ -258,7 +260,8 @@ export default {
 
       this.SET_DRAG_W_NODE({
         wNode: dragWNode,
-        parentWNodeId: this.parentWNodeIds[len - 1]
+        parentWNodeId: this.parentWNodeIds[len - 1],
+        parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
       })
     },
     dragOver(event) {
@@ -267,11 +270,7 @@ export default {
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (
-          _dragOverTime - _dragEnterStartTime >= 500 &&
-          !this.isOpen &&
-          this.hasChildren
-        ) {
+        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
           this.handleNodeClick()
         }
       } else {
@@ -297,29 +296,20 @@ export default {
           parentWNodeIds: this.parentWNodeIds,
           parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
         })
-
-        // _fromNode.$parent.wNode.children = _fromNode.$parent.wNode.children.filter(
-        //   item => item.id !== _fromNode.wNode.id
-        // )
-
-        // _toNode.wNode.children.sort((a, b) => {
-        //   if (a.type === b.type) {
-        //     return a.name > b.name
-        //   }
-        //   if (a.type === 'folder' && b.type !== 'folder') {
-        //     return -1
-        //   }
-        //   if (a.type !== 'folder' && b.type === 'folder') {
-        //     return 1
-        //   }
-
-        //   return 0
-        // })
       }
 
       event.preventDefault()
     },
     handleNodeClick() {
+      const len = this.parentWNodeIds.length
+
+      this.SET_SELECTED_W_NODE({
+        wNode: this.wNode,
+        parentWNodeId: this.parentWNodeIds[len - 1],
+        parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
+      })
+
+      // this.isSelected = true
       // 테스트를 위해 주석 원래 사용하는 로직
       // this.setSelectedNodeId(this.wNode.id)
 
@@ -350,11 +340,9 @@ export default {
       this.$emit('emitChildNodeFilter', this.wNode.id)
     },
     emitChildNodeFilter(childId) {
-      this.wNode.children = this.wNode.children.filter(
-        child => child.id !== childId
-      )
+      this.wNode.children = this.wNode.children.filter(child => child.id !== childId)
     },
-    ...mapMutations(['SET_DRAG_W_NODE', 'SET_DROP_W_NODE']),
+    ...mapMutations(['SET_DRAG_W_NODE', 'SET_DROP_W_NODE', 'SET_SELECTED_W_NODE']),
     ...mapActions([
       'setNextNodeId',
       'setSelectedNodeId',

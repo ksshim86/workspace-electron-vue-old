@@ -1,13 +1,16 @@
 const state = {
-  nextNodeId: 9,
+  nextNodeId: 10,
   selectedNodeId: -1,
   newNodeId: -1,
   selectedWNode: {
-    id: 0,
-    name: '',
-    type: '',
-    path: '',
-    children: []
+    wNode: {
+      id: 0,
+      name: '',
+      type: '',
+      path: '',
+      children: []
+    },
+    parentWNodeIndexs: []
   },
   selectedParentWNode: {},
   dragWNode: {
@@ -18,7 +21,8 @@ const state = {
       path: '',
       children: []
     },
-    parentWNodeId: 0
+    parentWNodeId: 0,
+    parentWNodeIndexs: []
   },
   dropWNode: {
     id: 0,
@@ -30,8 +34,8 @@ const getters = {
   getNextNodeId: state => state.nextNodeId,
   getSelectedNodeId: state => state.selectedNodeId,
   getNewNodeId: state => state.newNodeId,
-  getSelectedWNode: state => state.selectedWNode,
   getSelectedParentWNode: state => state.selectedParentWNode,
+  GET_SELECTED_W_NODE: state => state.selectedWNode,
   GET_DRAG_W_NODE: state => state.dragWNode,
   GET_DROP_W_NODE: state => state.dropWNode
 }
@@ -46,9 +50,6 @@ const mutations = {
   setNewNodeId(state, value) {
     state.newNodeId = value
   },
-  setSelectedWNode(state, value) {
-    state.selectedWNode = value
-  },
   setSelectedParentWNode(state, value) {
     state.selectedParentWNode = value
   },
@@ -57,6 +58,9 @@ const mutations = {
   },
   setSelectedParentWNodeChildPush(state, value) {
     state.selectedParentWNode.children.push(value)
+  },
+  SET_SELECTED_W_NODE: (state, value) => {
+    state.selectedWNode = value
   },
   SET_DRAG_W_NODE: (state, value) => {
     state.dragWNode = value

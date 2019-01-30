@@ -93,7 +93,7 @@ export default {
         children: [
           {
             id: 3,
-            name: 'testtest',
+            name: 'AAA',
             type: 'folder',
             path: '',
             edit: false
@@ -109,7 +109,7 @@ export default {
         children: [
           {
             id: 5,
-            name: '템플릿',
+            name: 'BBB',
             type: 'folder',
             path: '',
             edit: false,
@@ -136,6 +136,14 @@ export default {
             id: 8,
             name: 'indexxxxxxxxxxxxxxxxxxxxxxxxxxx.html',
             type: 'html',
+            path: '',
+            edit: false,
+            children: []
+          },
+          {
+            id: 9,
+            name: 'CCC',
+            type: 'folder',
             path: '',
             edit: false,
             children: []
