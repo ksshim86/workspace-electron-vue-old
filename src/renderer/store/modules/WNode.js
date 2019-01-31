@@ -26,7 +26,7 @@ const state = {
   },
   dropWNode: {
     id: 0,
-    parentWNodeIndex: 0,
+    parentWNodeId: 0,
     parentWNodeIndexs: []
   }
 }

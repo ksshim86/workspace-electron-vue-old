@@ -17,7 +17,7 @@
         <w-node 
           ref="wNode" 
           v-for="(node, index) in wNodes" 
-          :nodes.sync="node"
+          :nodes="node"
           :parentWNodeIndex="index"
           :key="node.id" 
           :collapseAll="collapseAll" 
@@ -45,6 +45,7 @@ export default {
   },
   data() {
     return {
+      wNodes: [],
       style: {
         menu: {
           height: '25px'
@@ -64,12 +65,10 @@ export default {
     }
   },
   computed: {
-    wNodes() {
-      return JSON.parse(JSON.stringify(this.nodes))
-    },
     ...mapGetters({
       doneDrop: 'GET_DROP_W_NODE',
-      dragWNode: 'GET_DRAG_W_NODE'
+      dragWNode: 'GET_DRAG_W_NODE',
+      clickWNode: 'GET_SELECTED_W_NODE'
     })
   },
   watch: {
@@ -82,6 +81,8 @@ export default {
   },
   beforeCreate() {},
   created() {
+    this.wNodes = JSON.parse(JSON.stringify(this.nodes))
+
     for (let i = 0; i < this.wNodes.length; i += 1) {
       this.initWNode(this.wNodes[i])
     }
@@ -90,7 +91,7 @@ export default {
     // children이 없는 node children 속성 추가
     initWNode(node) {
       // props인 경우는 this.$set(node, 'children', [])
-      if (!node.children) node.children = []
+      if (!node.children) this.$set(node, 'children', [])
 
       for (let i = 0; i < node.children.length; i += 1) {
         this.initWNode(node.children[i])
@@ -102,12 +103,24 @@ export default {
       let index = parentWNodeIndexs[0]
       let node = this.wNodes[index].children
 
+      this.filterDragWNode()
+
       // 같은 부모를 가진곳에 push 하거나 filter해버리면
       // index로 위치를 찾고있어서 index가 꼬여버린다.
-      this.filterDragWNode()
+      // 위 문제를 해결한 if문
+      if (
+        this.dragWNode.parentWNodeIndexs[this.dragWNode.parentWNodeIndexs.length - 2] ===
+          parentWNodeIndexs[parentWNodeIndexs.length - 2] &&
+        parentWNodeIndexs[parentWNodeIndexs.length - 1] >
+          this.dragWNode.parentWNodeIndexs[this.dragWNode.parentWNodeIndexs.length - 1]
+      ) {
+        parentWNodeIndexs[parentWNodeIndexs.length - 1] =
+          parentWNodeIndexs[parentWNodeIndexs.length - 1] - 1
+      }
 
       if (parentWNodeIndexs.length === 1) {
         node.push(child)
+        // this.$set(node, node.length, child)
         this.sortWNode(node)
       } else {
         for (let i = 1; i < parentWNodeIndexs.length; i += 1) {
@@ -119,6 +132,8 @@ export default {
         }
 
         node[index].children.push(child)
+        // this.$set(node[index].children, node[index].children.length, child)
+
         this.sortWNode(node[index].children)
       }
     },
@@ -164,23 +179,24 @@ export default {
     handleNewFolderClick() {
       const newNode = {
         id: this.getNextNodeId(),
-        name: '',
+        name: 'TEST',
         type: 'folder',
         path: '',
         children: []
       }
+      // this.$set(this.wNodes[0].children, 0, newNode)
+      this.wNodes[0].children.push(newNode)
+      // const selectedWNode = Object.assign({}, this.getSelectedWNode())
 
-      const selectedWNode = Object.assign({}, this.getSelectedWNode())
+      // if (!Object.entries(selectedWNode).length) return
 
-      if (!Object.entries(selectedWNode).length) return
+      // if (this.isCreateNewNode(selectedWNode.type)) {
+      //   this.setSelectedWNodeChildPush(newNode)
+      // } else {
+      //   this.setSelectedParentWNodeChildPush(newNode)
+      // }
 
-      if (this.isCreateNewNode(selectedWNode.type)) {
-        this.setSelectedWNodeChildPush(newNode)
-      } else {
-        this.setSelectedParentWNodeChildPush(newNode)
-      }
-
-      this.$nextTick(() => {})
+      // this.$nextTick(() => {})
     },
     handleNewTemplateClick() {},
     isCreateNewNode(type) {
@@ -192,11 +208,7 @@ export default {
       this.selectedWNode = wNode
       this.selectedParentNodes = parentNodes
     },
-    ...mapGetters([
-      'getNextNodeId',
-      'getSelectedWNode',
-      'getSelectedParentWNode'
-    ]),
+    ...mapGetters(['getNextNodeId', 'getSelectedWNode', 'getSelectedParentWNode']),
     ...mapActions([
       'setSelectedNodeId',
       'setNewNodeId',

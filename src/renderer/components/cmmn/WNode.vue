@@ -37,7 +37,7 @@
       </v-menu>
     </div>
     <w-node v-show="isOpen" 
-      v-for="(node, index) in nodes.children" 
+      v-for="(node, index) in wNode.children" 
       :nodes="node"
       :parentWNodeIndex="index"
       :parentWNodeIds="parentWNodeIdsAndWNodeId"
@@ -103,14 +103,14 @@ export default {
   },
   data() {
     return {
-      wNode: this.nodes,
+      // wNode: this.nodes,
       options: {
         rename: false,
         x: 0,
         y: 0
       },
       isOpen: false,
-      isSelected: false,
+      // isSelected: false,
       isOptionsOpen: false,
       isEdit: false,
       type: {
@@ -129,19 +129,20 @@ export default {
       }
     }
   },
-  created() {
-    this.wNode = Object.assign(this.wNode, this.nodes)
-  },
+  created() {},
   mounted() {
     // if (this.wNode.id === this.getNextNodeId) {
     //   this.isEdit = true
-
     //   this.$nextTick(() => {
     //     this.$refs.textFieldForName.focus()
     //   })
     // }
   },
   computed: {
+    wNode() {
+      console.log('wWnode computed')
+      return JSON.parse(JSON.stringify(this.nodes))
+    },
     parentWNodeIdsAndWNodeId() {
       let arr = []
 
@@ -171,6 +172,9 @@ export default {
         parentWNodeId !== dropTarget.id
       )
     },
+    isSelected() {
+      return this.wNode.id === this.GET_SELECTED_W_NODE.wNode.id
+    },
     hasChildren() {
       return !!this.wNode.children && !!this.wNode.children.length
     },
@@ -199,7 +203,8 @@ export default {
       'getNewNodeId',
       'getSelectedWNode',
       'getSelectedParentWNode',
-      'GET_DRAG_W_NODE'
+      'GET_DRAG_W_NODE',
+      'GET_SELECTED_W_NODE'
     ])
   },
   watch: {
@@ -253,25 +258,25 @@ export default {
   },
   methods: {
     dragstart(event) {
-      const dragWNode = Object.assign({}, this.wNode)
       const len = this.parentWNodeIds.length
 
       event.dataTransfer.effectAllowed = 'move'
 
       this.SET_DRAG_W_NODE({
-        wNode: dragWNode,
+        wNode: this.wNode,
         parentWNodeId: this.parentWNodeIds[len - 1],
         parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
       })
     },
     dragOver(event) {
+      const delayTime = 500
       let _dragOverTime = null
 
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (_dragOverTime - _dragEnterStartTime >= 500 && !this.isOpen && this.hasChildren) {
-          this.handleNodeClick()
+        if (_dragOverTime - _dragEnterStartTime >= delayTime && !this.isOpen && this.hasChildren) {
+          this.isOpen = true
         }
       } else {
         _dragEnterStartTime = null
@@ -290,10 +295,11 @@ export default {
     },
     drop(event) {
       if (this.isDrop) {
-        // _toNode.wNode.children.push(_fromNode.wNode)
+        const len = this.parentWNodeIds.length
+
         this.SET_DROP_W_NODE({
           id: this.wNode.id,
-          parentWNodeIds: this.parentWNodeIds,
+          parentWNodeId: this.parentWNodeIds[len - 1],
           parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
         })
       }
@@ -301,15 +307,15 @@ export default {
       event.preventDefault()
     },
     handleNodeClick() {
+      // const selectedWNode = JSON.parse(JSON.stringify(this.wNode))
       const len = this.parentWNodeIds.length
 
       this.SET_SELECTED_W_NODE({
-        wNode: this.wNode,
+        wNode: this.wNode, // selectedWNode,
         parentWNodeId: this.parentWNodeIds[len - 1],
         parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
       })
 
-      // this.isSelected = true
       // 테스트를 위해 주석 원래 사용하는 로직
       // this.setSelectedNodeId(this.wNode.id)
 
