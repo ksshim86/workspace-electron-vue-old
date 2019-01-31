@@ -40,10 +40,10 @@ function createWindow() {
     useContentSize: true,
     width: 1264,
     frame: true,
-    show: false
+    show: true
   })
 
-  mainWindow.setMenu(null)
+  // mainWindow.setMenu(null)
 
   initData()
 

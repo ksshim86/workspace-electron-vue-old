@@ -190,7 +190,9 @@ export default {
       let iconClass = ''
 
       if (this.wNode.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen
+          ? 'mdi-folder-open'
+          : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.wNode.type]}`
@@ -198,7 +200,6 @@ export default {
       return iconClass
     },
     ...mapGetters([
-      'getNextNodeId',
       'getSelectedNodeId',
       'getNewNodeId',
       'getSelectedWNode',
@@ -230,13 +231,16 @@ export default {
       //   this.isSelected = false
       // }
 
-      if (this.wNode.id === this.getNewNodeId && (newVal === -1 || this.wNode.id !== newVal)) {
+      if (
+        this.wNode.id === this.getNewNodeId &&
+        (newVal === -1 || this.wNode.id !== newVal)
+      ) {
         this.isEdit = false
 
         if (this.wNode.name === '') {
           this.childNodeFilter()
         } else {
-          this.setNextNodeId()
+          // this.setNextNodeId()
         }
       }
     },
@@ -275,7 +279,11 @@ export default {
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (_dragOverTime - _dragEnterStartTime >= delayTime && !this.isOpen && this.hasChildren) {
+        if (
+          _dragOverTime - _dragEnterStartTime >= delayTime &&
+          !this.isOpen &&
+          this.hasChildren
+        ) {
           this.isOpen = true
         }
       } else {
@@ -346,11 +354,16 @@ export default {
       this.$emit('emitChildNodeFilter', this.wNode.id)
     },
     emitChildNodeFilter(childId) {
-      this.wNode.children = this.wNode.children.filter(child => child.id !== childId)
+      this.wNode.children = this.wNode.children.filter(
+        child => child.id !== childId
+      )
     },
-    ...mapMutations(['SET_DRAG_W_NODE', 'SET_DROP_W_NODE', 'SET_SELECTED_W_NODE']),
+    ...mapMutations([
+      'SET_DRAG_W_NODE',
+      'SET_DROP_W_NODE',
+      'SET_SELECTED_W_NODE'
+    ]),
     ...mapActions([
-      'setNextNodeId',
       'setSelectedNodeId',
       'setSelectedWNode',
       'setSelectedParentWNode'

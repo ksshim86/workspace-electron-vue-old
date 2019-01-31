@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import WNode from './WNode'
 
 export default {
@@ -68,7 +68,8 @@ export default {
     ...mapGetters({
       doneDrop: 'GET_DROP_W_NODE',
       dragWNode: 'GET_DRAG_W_NODE',
-      clickWNode: 'GET_SELECTED_W_NODE'
+      GET_SELECTED_W_NODE: 'GET_SELECTED_W_NODE',
+      GET_NEXT_W_NODE_ID: 'GET_NEXT_W_NODE_ID'
     })
   },
   watch: {
@@ -109,10 +110,13 @@ export default {
       // index로 위치를 찾고있어서 index가 꼬여버린다.
       // 위 문제를 해결한 if문
       if (
-        this.dragWNode.parentWNodeIndexs[this.dragWNode.parentWNodeIndexs.length - 2] ===
-          parentWNodeIndexs[parentWNodeIndexs.length - 2] &&
+        this.dragWNode.parentWNodeIndexs[
+          this.dragWNode.parentWNodeIndexs.length - 2
+        ] === parentWNodeIndexs[parentWNodeIndexs.length - 2] &&
         parentWNodeIndexs[parentWNodeIndexs.length - 1] >
-          this.dragWNode.parentWNodeIndexs[this.dragWNode.parentWNodeIndexs.length - 1]
+          this.dragWNode.parentWNodeIndexs[
+            this.dragWNode.parentWNodeIndexs.length - 1
+          ]
       ) {
         parentWNodeIndexs[parentWNodeIndexs.length - 1] =
           parentWNodeIndexs[parentWNodeIndexs.length - 1] - 1
@@ -132,7 +136,6 @@ export default {
         }
 
         node[index].children.push(child)
-        // this.$set(node[index].children, node[index].children.length, child)
 
         this.sortWNode(node[index].children)
       }
@@ -177,15 +180,36 @@ export default {
       }
     },
     handleNewFolderClick() {
+      // 왜 state 변경이 안되지??????? 소스상세 바꿔도 안되고.. 캐쉬때문인가
+      this.SET_NEXT_W_NODE_ID = 20
+      const nextId = this.GET_NEXT_W_NODE_ID
       const newNode = {
-        id: this.getNextNodeId(),
-        name: 'TEST',
+        id: nextId,
+        name: '',
         type: 'folder',
         path: '',
         children: []
       }
-      // this.$set(this.wNodes[0].children, 0, newNode)
-      this.wNodes[0].children.push(newNode)
+      const { wNode, parentWNodeIndexs } = this.GET_SELECTED_W_NODE
+      const len = parentWNodeIndexs.length
+      let index = parentWNodeIndexs[0]
+      let node = this.wNodes
+
+      if (wNode.id === 0) return
+
+      for (let i = 0; i < len; i += 1) {
+        index = parentWNodeIndexs[i]
+
+        if (i === len - 1 && this.isCreateNewNode(node[index].type)) {
+          node[index].children.push(newNode)
+        } else if (i === len - 1 && len > 1) {
+          node.push(newNode)
+        }
+
+        node = node[index].children
+      }
+
+      this.SET_NEW_W_NODE_ID = newNode.id
       // const selectedWNode = Object.assign({}, this.getSelectedWNode())
 
       // if (!Object.entries(selectedWNode).length) return
@@ -208,15 +232,8 @@ export default {
       this.selectedWNode = wNode
       this.selectedParentNodes = parentNodes
     },
-    ...mapGetters(['getNextNodeId', 'getSelectedWNode', 'getSelectedParentWNode']),
-    ...mapActions([
-      'setSelectedNodeId',
-      'setNewNodeId',
-      'setSelectedWNode',
-      'setSelectedParentWNode',
-      'setSelectedWNodeChildPush',
-      'setSelectedParentWNodeChildPush'
-    ])
+    ...mapMutations(['SET_NEW_W_NODE_ID', 'SET_NEXT_W_NODE_ID']),
+    ...mapActions([])
   }
 }
 </script>
