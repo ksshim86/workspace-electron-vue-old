@@ -1,8 +1,5 @@
 const state = {
   nextWNodeId: 10,
-  selectedNodeId: -1,
-  newNodeId: -1,
-  selectedParentWNode: {},
   dragWNode: {
     wNode: {
       id: 0,
@@ -12,12 +9,12 @@ const state = {
       children: []
     },
     parentWNodeId: 0,
-    parentWNodeIndexs: []
+    parentWNodeIndexsAndWNodeIndex: []
   },
   dropWNode: {
     id: 0,
     parentWNodeId: 0,
-    parentWNodeIndexs: []
+    parentWNodeIndexsAndWNodeIndex: []
   },
   selectedWNode: {
     wNode: {
@@ -27,24 +24,31 @@ const state = {
       path: '',
       children: []
     },
-    parentWNodeIndexs: []
+    parentWNodeIndexsAndWNodeIndex: []
+  },
+  editingWNode: {
+    wNode: {
+      id: 0,
+      name: '',
+      type: '',
+      path: '',
+      children: []
+    },
+    parentWNodeIndexsAndWNodeIndex: [],
+    status: '' // new or modify
   }
 }
 const getters = {
-  getSelectedNodeId: state => state.selectedNodeId,
-  getNewNodeId: state => state.newNodeId,
-  getSelectedParentWNode: state => state.selectedParentWNode,
   GET_DRAG_W_NODE: state => state.dragWNode,
   GET_DROP_W_NODE: state => state.dropWNode,
   GET_SELECTED_W_NODE: state => state.selectedWNode,
-  GET_NEW_W_NODE_ID: state => state.newNodeId,
-  GET_NEXT_W_NODE_ID: state => state.nextWNodeId
+  GET_NEXT_W_NODE_ID: state => state.nextWNodeId,
+  GET_EDITING_W_NODE: state => state.editingWNode
 }
 
 const mutations = {
-  SET_NEXT_W_NODE_ID(state, value) {
-    console.log(`SET_NEXT_W_NODE_ID: ${value}`)
-    state.nextWNodeId = value
+  SET_NEXT_W_NODE_ID(state) {
+    state.nextWNodeId += 1
   },
   SET_SELECTED_W_NODE: (state, value) => {
     state.selectedWNode = value
@@ -55,15 +59,33 @@ const mutations = {
   SET_DROP_W_NODE: (state, value) => {
     state.dropWNode = value
   },
-  SET_NEW_W_NODE_ID: (state, value) => {
-    state.newNodeId = value
+  SET_EDITING_W_NODE: (state, value) => {
+    state.editingWNode = value
+  },
+  SET_EDITING_W_NODE_NAME: (state, value) => {
+    state.editingWNode.wNode.name = value
   }
 }
 
 const actions = {
-  // SET_DRAG_W_NODE: ({ commit }, payload) => {
-  //   commit('SET_DRAG_W_NODE', payload)
-  // }
+  SET_SELECTED_W_NODE: ({ commit }, payload) => {
+    commit('SET_SELECTED_W_NODE', payload)
+  },
+  SET_DRAG_W_NODE: ({ commit }, payload) => {
+    commit('SET_DRAG_W_NODE', payload)
+  },
+  SET_DROP_W_NODE: ({ commit }, payload) => {
+    commit('SET_DROP_W_NODE', payload)
+  },
+  SET_NEXT_W_NODE_ID: ({ commit }) => {
+    commit('SET_NEXT_W_NODE_ID')
+  },
+  SET_EDITING_W_NODE: ({ commit }, payload) => {
+    commit('SET_EDITING_W_NODE', payload)
+  },
+  SET_EDITING_W_NODE_NAME: ({ commit }, payload) => {
+    commit('SET_EDITING_W_NODE_NAME', payload)
+  }
 }
 
 export default {

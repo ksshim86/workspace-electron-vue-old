@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WNode from './WNode'
 
 export default {
@@ -69,7 +69,8 @@ export default {
       doneDrop: 'GET_DROP_W_NODE',
       dragWNode: 'GET_DRAG_W_NODE',
       GET_SELECTED_W_NODE: 'GET_SELECTED_W_NODE',
-      GET_NEXT_W_NODE_ID: 'GET_NEXT_W_NODE_ID'
+      nextWNodeId: 'GET_NEXT_W_NODE_ID',
+      editingWNode: 'GET_EDITING_W_NODE'
     })
   },
   watch: {
@@ -100,37 +101,31 @@ export default {
     },
     moveChild(dropWNode) {
       const child = this.dragWNode.wNode
-      const { parentWNodeIndexs } = dropWNode
-      let index = parentWNodeIndexs[0]
+      const dropWNodeTreeIndexes = dropWNode.parentWNodeIndexsAndWNodeIndex
+      const dragWNodeTreeIndexes = this.dragWNode.parentWNodeIndexsAndWNodeIndex
+      const dropLength = dropWNodeTreeIndexes.length
+      const dragLength = dragWNodeTreeIndexes.length
+      let index = dropWNodeTreeIndexes[0]
       let node = this.wNodes[index].children
 
       this.filterDragWNode()
 
-      // 같은 부모를 가진곳에 push 하거나 filter해버리면
-      // index로 위치를 찾고있어서 index가 꼬여버린다.
-      // 위 문제를 해결한 if문
       if (
-        this.dragWNode.parentWNodeIndexs[
-          this.dragWNode.parentWNodeIndexs.length - 2
-        ] === parentWNodeIndexs[parentWNodeIndexs.length - 2] &&
-        parentWNodeIndexs[parentWNodeIndexs.length - 1] >
-          this.dragWNode.parentWNodeIndexs[
-            this.dragWNode.parentWNodeIndexs.length - 1
-          ]
+        dragWNodeTreeIndexes[dragLength - 2] === dropWNodeTreeIndexes[dropLength - 2] &&
+        dropWNodeTreeIndexes[dropLength - 1] > dragWNodeTreeIndexes[dragLength - 1]
       ) {
-        parentWNodeIndexs[parentWNodeIndexs.length - 1] =
-          parentWNodeIndexs[parentWNodeIndexs.length - 1] - 1
+        dropWNodeTreeIndexes[dropLength - 1] = dropWNodeTreeIndexes[dropLength - 1] - 1
       }
 
-      if (parentWNodeIndexs.length === 1) {
+      if (dropLength === 1) {
         node.push(child)
         // this.$set(node, node.length, child)
         this.sortWNode(node)
       } else {
-        for (let i = 1; i < parentWNodeIndexs.length; i += 1) {
-          index = parentWNodeIndexs[i]
+        for (let i = 1; i < dropLength; i += 1) {
+          index = dropWNodeTreeIndexes[i]
 
-          if (i < parentWNodeIndexs.length - 1) {
+          if (i < dropLength - 1) {
             node = node[index].children
           }
         }
@@ -141,14 +136,14 @@ export default {
       }
     },
     filterDragWNode() {
-      const { parentWNodeIndexs } = this.dragWNode
-      let index = parentWNodeIndexs[0]
+      const dragWNodeTreeIndexes = this.dragWNode.parentWNodeIndexsAndWNodeIndex
+      let index = dragWNodeTreeIndexes[0]
       let node = this.wNodes[index].children
 
-      for (let i = 1; i < parentWNodeIndexs.length; i += 1) {
-        index = parentWNodeIndexs[i]
+      for (let i = 1; i < dragWNodeTreeIndexes.length; i += 1) {
+        index = dragWNodeTreeIndexes[i]
 
-        if (i < parentWNodeIndexs.length - 1) {
+        if (i < dragWNodeTreeIndexes.length - 1) {
           node = node[index].children
         }
       }
@@ -175,30 +170,81 @@ export default {
     },
     handleNodeListDivClicked(e) {
       if (e.target.className === 'w-tree-view-node-list') {
-        // this.setSelectedNodeId(-1)
-        // this.selectedWNode = {}
+        this.setNotSelectWNode()
+        const initEditingWNode = {
+          wNode: {
+            id: 0,
+            name: '',
+            type: '',
+            path: '',
+            children: []
+          },
+          parentWNodeIndexsAndWNodeIndex: [],
+          status: ''
+        }
+        const { wNode, status } = this.editingWNode
+        const editingWNodeTreeIndexes = this.editingWNode.parentWNodeIndexsAndWNodeIndex
+        const treeLen = editingWNodeTreeIndexes.length
+        let node = this.wNodes
+
+        if (status === '') return
+
+        if (status === 'new') {
+          if (wNode.name === '' && !wNode.name.length) {
+            // 1. node를 제거
+            for (let i = 0; i < treeLen; i += 1) {
+              const index = editingWNodeTreeIndexes[i]
+
+              if (i === treeLen - 1) {
+                node.splice(index, 1)
+              } else {
+                node = node[index].children
+              }
+            }
+            // 2. editingWNode를 초기화
+            this.SET_EDITING_W_NODE(initEditingWNode)
+          }
+        }
+
+        if (status === 'modify') {
+          //
+        }
+        // editing 중인 node가 있으면 editing = false
+        // newWNode가 editing 중이면, node의 name != '' 이면 저장
+        // 원래있던 node면 name != '' 이면 name 변경, name == '' 이면 원복
       }
     },
+    setNotSelectWNode() {
+      const selectedWNode = {
+        wNode: {
+          id: 0,
+          name: '',
+          type: '',
+          path: '',
+          children: []
+        },
+        parentWNodeIndexsAndWNodeIndex: []
+      }
+
+      this.SET_SELECTED_W_NODE(selectedWNode)
+    },
     handleNewFolderClick() {
-      // 왜 state 변경이 안되지??????? 소스상세 바꿔도 안되고.. 캐쉬때문인가
-      this.SET_NEXT_W_NODE_ID = 20
-      const nextId = this.GET_NEXT_W_NODE_ID
       const newNode = {
-        id: nextId,
+        id: this.nextWNodeId,
         name: '',
         type: 'folder',
         path: '',
         children: []
       }
-      const { wNode, parentWNodeIndexs } = this.GET_SELECTED_W_NODE
-      const len = parentWNodeIndexs.length
-      let index = parentWNodeIndexs[0]
+      const { wNode, parentWNodeIndexsAndWNodeIndex } = this.GET_SELECTED_W_NODE
+      const len = parentWNodeIndexsAndWNodeIndex.length
+      let index = parentWNodeIndexsAndWNodeIndex[0]
       let node = this.wNodes
 
       if (wNode.id === 0) return
 
       for (let i = 0; i < len; i += 1) {
-        index = parentWNodeIndexs[i]
+        index = parentWNodeIndexsAndWNodeIndex[i]
 
         if (i === len - 1 && this.isCreateNewNode(node[index].type)) {
           node[index].children.push(newNode)
@@ -209,7 +255,30 @@ export default {
         node = node[index].children
       }
 
-      this.SET_NEW_W_NODE_ID = newNode.id
+      this.sortWNode(node)
+
+      this.$nextTick(() => {
+        const editingWNodeIndex = node.findIndex(element => element.id === newNode.id)
+        let editingWNode = {
+          wNode: {},
+          parentWNodeIndexsAndWNodeIndex: [],
+          status: ''
+        }
+        let indexes = []
+
+        indexes = [...parentWNodeIndexsAndWNodeIndex]
+        indexes.push(editingWNodeIndex)
+
+        editingWNode = {
+          wNode: newNode,
+          parentWNodeIndexsAndWNodeIndex: indexes,
+          status: 'new'
+        }
+
+        this.SET_EDITING_W_NODE(editingWNode)
+        this.SET_NEXT_W_NODE_ID()
+      })
+
       // const selectedWNode = Object.assign({}, this.getSelectedWNode())
 
       // if (!Object.entries(selectedWNode).length) return
@@ -232,8 +301,7 @@ export default {
       this.selectedWNode = wNode
       this.selectedParentNodes = parentNodes
     },
-    ...mapMutations(['SET_NEW_W_NODE_ID', 'SET_NEXT_W_NODE_ID']),
-    ...mapActions([])
+    ...mapActions(['SET_NEXT_W_NODE_ID', 'SET_SELECTED_W_NODE', 'SET_EDITING_W_NODE'])
   }
 }
 </script>

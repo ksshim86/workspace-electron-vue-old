@@ -18,6 +18,7 @@
             required 
             hide-details 
             class="ma-0"
+            @change="nameEditing"
           />
         </div>
       </div>
@@ -52,7 +53,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 let prevRightClickedObj = null
 let _dragEnterNodeId = -1
@@ -103,14 +104,12 @@ export default {
   },
   data() {
     return {
-      // wNode: this.nodes,
       options: {
         rename: false,
         x: 0,
         y: 0
       },
       isOpen: false,
-      // isSelected: false,
       isOptionsOpen: false,
       isEdit: false,
       type: {
@@ -130,17 +129,9 @@ export default {
     }
   },
   created() {},
-  mounted() {
-    // if (this.wNode.id === this.getNextNodeId) {
-    //   this.isEdit = true
-    //   this.$nextTick(() => {
-    //     this.$refs.textFieldForName.focus()
-    //   })
-    // }
-  },
+  mounted() {},
   computed: {
     wNode() {
-      console.log('wWnode computed')
       return JSON.parse(JSON.stringify(this.nodes))
     },
     parentWNodeIdsAndWNodeId() {
@@ -163,7 +154,7 @@ export default {
       return this.depth > 0 || this.wNode.type !== 'work'
     },
     isDrop() {
-      const { wNode, parentWNodeId } = this.GET_DRAG_W_NODE
+      const { wNode, parentWNodeId } = this.dragWNode
       const dropTarget = this.wNode
 
       return (
@@ -173,7 +164,7 @@ export default {
       )
     },
     isSelected() {
-      return this.wNode.id === this.GET_SELECTED_W_NODE.wNode.id
+      return this.wNode.id === this.selectedWNode.wNode.id
     },
     hasChildren() {
       return !!this.wNode.children && !!this.wNode.children.length
@@ -190,23 +181,18 @@ export default {
       let iconClass = ''
 
       if (this.wNode.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen
-          ? 'mdi-folder-open'
-          : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.wNode.type]}`
 
       return iconClass
     },
-    ...mapGetters([
-      'getSelectedNodeId',
-      'getNewNodeId',
-      'getSelectedWNode',
-      'getSelectedParentWNode',
-      'GET_DRAG_W_NODE',
-      'GET_SELECTED_W_NODE'
-    ])
+    ...mapGetters({
+      dragWNode: 'GET_DRAG_W_NODE',
+      selectedWNode: 'GET_SELECTED_W_NODE',
+      editingWNode: 'GET_EDITING_W_NODE'
+    })
   },
   watch: {
     hasChildren() {
@@ -224,52 +210,30 @@ export default {
         this.$emit('emitCollapseAllChange')
       }
     },
-    getSelectedNodeId(newVal, oldVal) {
-      // if (this.wNode.id === newVal) {
-      //   this.isSelected = true
-      // } else {
-      //   this.isSelected = false
-      // }
-
-      if (
-        this.wNode.id === this.getNewNodeId &&
-        (newVal === -1 || this.wNode.id !== newVal)
-      ) {
-        this.isEdit = false
-
-        if (this.wNode.name === '') {
-          this.childNodeFilter()
-        } else {
-          // this.setNextNodeId()
-        }
-      }
-    },
-    getNewNodeId(newVal, oldVal) {
-      if (this.wNode.id === newVal) {
+    editingWNode() {
+      if (this.wNode.id === this.editingWNode.wNode.id) {
         this.isEdit = true
-        this.$parent.isOpen = true
 
         this.$nextTick(() => {
           this.$refs.textFieldForName.focus()
         })
-      } else {
+      } else if (this.isEdit) {
         this.isEdit = false
       }
     }
   },
-  updated() {
-    console.log(`wnode-${this.wNode.name} updated`)
-  },
+  updated() {},
   methods: {
     dragstart(event) {
       const len = this.parentWNodeIds.length
+      const lastIndex = len - 1
 
       event.dataTransfer.effectAllowed = 'move'
 
       this.SET_DRAG_W_NODE({
         wNode: this.wNode,
-        parentWNodeId: this.parentWNodeIds[len - 1],
-        parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
+        parentWNodeId: this.parentWNodeIds[lastIndex],
+        parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
       })
     },
     dragOver(event) {
@@ -279,11 +243,7 @@ export default {
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (
-          _dragOverTime - _dragEnterStartTime >= delayTime &&
-          !this.isOpen &&
-          this.hasChildren
-        ) {
+        if (_dragOverTime - _dragEnterStartTime >= delayTime && !this.isOpen && this.hasChildren) {
           this.isOpen = true
         }
       } else {
@@ -308,27 +268,20 @@ export default {
         this.SET_DROP_W_NODE({
           id: this.wNode.id,
           parentWNodeId: this.parentWNodeIds[len - 1],
-          parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
+          parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
         })
       }
 
       event.preventDefault()
     },
     handleNodeClick() {
-      // const selectedWNode = JSON.parse(JSON.stringify(this.wNode))
       const len = this.parentWNodeIds.length
 
       this.SET_SELECTED_W_NODE({
-        wNode: this.wNode, // selectedWNode,
+        wNode: JSON.parse(JSON.stringify(this.wNode)),
         parentWNodeId: this.parentWNodeIds[len - 1],
-        parentWNodeIndexs: this.parentWNodeIndexsAndWNodeIndex
+        parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
       })
-
-      // 테스트를 위해 주석 원래 사용하는 로직
-      // this.setSelectedNodeId(this.wNode.id)
-
-      // this.setSelectedWNode(this.wNode)
-      // this.setSelectedParentWNode(this.parentNodes)
 
       this.nodeOpen()
     },
@@ -350,23 +303,22 @@ export default {
         this.isOptionsOpen = true
       })
     },
+    nameEditing() {
+      const { name } = this.wNode
+
+      this.SET_EDITING_W_NODE_NAME(name)
+    },
     childNodeFilter() {
       this.$emit('emitChildNodeFilter', this.wNode.id)
     },
     emitChildNodeFilter(childId) {
-      this.wNode.children = this.wNode.children.filter(
-        child => child.id !== childId
-      )
+      this.wNode.children = this.wNode.children.filter(child => child.id !== childId)
     },
-    ...mapMutations([
+    ...mapActions([
+      'SET_SELECTED_W_NODE',
       'SET_DRAG_W_NODE',
       'SET_DROP_W_NODE',
-      'SET_SELECTED_W_NODE'
-    ]),
-    ...mapActions([
-      'setSelectedNodeId',
-      'setSelectedWNode',
-      'setSelectedParentWNode'
+      'SET_EDITING_W_NODE_NAME'
     ])
   }
 }
