@@ -60,9 +60,7 @@ export default {
 <style>
 html {
   overflow-y: hidden;
-  /* -webkit-app-region: no-drag; */
 }
 .frame-bar {
-  /* -webkit-app-region: drag; */
 }
 </style>
