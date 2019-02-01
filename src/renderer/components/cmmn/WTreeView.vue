@@ -22,7 +22,6 @@
           :key="node.id" 
           :collapseAll="collapseAll" 
           @emitCollapseAllChange="emitCollapseAllChange" 
-          @emitPassSelectedWnode="emitPassSelectedWnode"
         >
         </w-node>
       </ul>
@@ -60,7 +59,6 @@ export default {
         }
       },
       collapseAll: false,
-      selectedWNode: {},
       selectedParentNodes: {}
     }
   },
@@ -68,7 +66,7 @@ export default {
     ...mapGetters({
       doneDrop: 'GET_DROP_W_NODE',
       dragWNode: 'GET_DRAG_W_NODE',
-      GET_SELECTED_W_NODE: 'GET_SELECTED_W_NODE',
+      selectedWNode: 'GET_SELECTED_W_NODE',
       nextWNodeId: 'GET_NEXT_W_NODE_ID',
       editingWNode: 'GET_EDITING_W_NODE'
     })
@@ -79,6 +77,9 @@ export default {
     },
     doneDrop(newVal, oldVal) {
       this.moveChild(newVal)
+    },
+    selectedWNode(newVal, oldVal) {
+      this.editingWNodeSaveAndDelete()
     }
   },
   beforeCreate() {},
@@ -111,14 +112,17 @@ export default {
       this.filterDragWNode()
 
       if (
-        dragWNodeTreeIndexes[dragLength - 2] === dropWNodeTreeIndexes[dropLength - 2] &&
-        dropWNodeTreeIndexes[dropLength - 1] > dragWNodeTreeIndexes[dragLength - 1]
+        dragWNodeTreeIndexes[dragLength - 2] ===
+          dropWNodeTreeIndexes[dropLength - 2] &&
+        dropWNodeTreeIndexes[dropLength - 1] >
+          dragWNodeTreeIndexes[dragLength - 1]
       ) {
-        dropWNodeTreeIndexes[dropLength - 1] = dropWNodeTreeIndexes[dropLength - 1] - 1
+        dropWNodeTreeIndexes[dropLength - 1] =
+          dropWNodeTreeIndexes[dropLength - 1] - 1
       }
 
       if (dropLength === 1) {
-        node.push(child)
+        node.push(JSON.parse(JSON.stringify(child)))
         // this.$set(node, node.length, child)
         this.sortWNode(node)
       } else {
@@ -130,7 +134,7 @@ export default {
           }
         }
 
-        node[index].children.push(child)
+        node[index].children.push(JSON.parse(JSON.stringify(child)))
 
         this.sortWNode(node[index].children)
       }
@@ -171,51 +175,54 @@ export default {
     handleNodeListDivClicked(e) {
       if (e.target.className === 'w-tree-view-node-list') {
         this.setNotSelectWNode()
-        const initEditingWNode = {
-          wNode: {
-            id: 0,
-            name: '',
-            type: '',
-            path: '',
-            children: []
-          },
-          parentWNodeIndexsAndWNodeIndex: [],
-          status: ''
-        }
-        const { wNode, status } = this.editingWNode
-        const editingWNodeTreeIndexes = this.editingWNode.parentWNodeIndexsAndWNodeIndex
-        const treeLen = editingWNodeTreeIndexes.length
-        let node = this.wNodes
-
-        if (status === '') return
-
-        if (status === 'new') {
-          if (wNode.name === '' && !wNode.name.length) {
-            // 1. node를 제거
-            for (let i = 0; i < treeLen; i += 1) {
-              const index = editingWNodeTreeIndexes[i]
-
-              if (i === treeLen - 1) {
-                node.splice(index, 1)
-              } else {
-                node = node[index].children
-              }
-            }
-            // 2. editingWNode를 초기화
-            this.SET_EDITING_W_NODE(initEditingWNode)
-          }
-        }
-
-        if (status === 'modify') {
-          //
-        }
-        // editing 중인 node가 있으면 editing = false
-        // newWNode가 editing 중이면, node의 name != '' 이면 저장
-        // 원래있던 node면 name != '' 이면 name 변경, name == '' 이면 원복
       }
     },
+    editingWNodeSaveAndDelete() {
+      const initEditingWNode = {
+        wNode: {
+          id: 0,
+          name: '',
+          type: '',
+          path: '',
+          children: []
+        },
+        parentWNodeIndexsAndWNodeIndex: [],
+        status: ''
+      }
+      const { wNode, status } = this.editingWNode
+      const editingWNodeTreeIndexes = this.editingWNode
+        .parentWNodeIndexsAndWNodeIndex
+      const treeLen = editingWNodeTreeIndexes.length
+      let node = this.wNodes
+
+      if (status === '') return
+
+      if (status === 'new') {
+        if (wNode.name === '' && !wNode.name.length) {
+          // 1. node를 제거
+          for (let i = 0; i < treeLen; i += 1) {
+            const index = editingWNodeTreeIndexes[i]
+
+            if (i === treeLen - 1) {
+              node.splice(index, 1)
+            } else {
+              node = node[index].children
+            }
+          }
+          // 2. editingWNode를 초기화
+          this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
+        }
+      }
+
+      if (status === 'modify') {
+        //
+      }
+      // editing 중인 node가 있으면 editing = false
+      // newWNode가 editing 중이면, node의 name != '' 이면 저장
+      // 원래있던 node면 name != '' 이면 name 변경, name == '' 이면 원복
+    },
     setNotSelectWNode() {
-      const selectedWNode = {
+      const notSelectedWNode = {
         wNode: {
           id: 0,
           name: '',
@@ -226,7 +233,7 @@ export default {
         parentWNodeIndexsAndWNodeIndex: []
       }
 
-      this.SET_SELECTED_W_NODE(selectedWNode)
+      this.SET_SELECTED_W_NODE(notSelectedWNode)
     },
     handleNewFolderClick() {
       const newNode = {
@@ -236,72 +243,72 @@ export default {
         path: '',
         children: []
       }
-      const { wNode, parentWNodeIndexsAndWNodeIndex } = this.GET_SELECTED_W_NODE
-      const len = parentWNodeIndexsAndWNodeIndex.length
-      let index = parentWNodeIndexsAndWNodeIndex[0]
+      const { wNode } = this.selectedWNode
+      const treeIndexes = [...this.selectedWNode.parentWNodeIndexsAndWNodeIndex]
+      const len = treeIndexes.length
+      let index = treeIndexes[0]
       let node = this.wNodes
 
       if (wNode.id === 0) return
 
       for (let i = 0; i < len; i += 1) {
-        index = parentWNodeIndexsAndWNodeIndex[i]
+        index = treeIndexes[i]
 
         if (i === len - 1 && this.isCreateNewNode(node[index].type)) {
           node[index].children.push(newNode)
-        } else if (i === len - 1 && len > 1) {
+        } else if (
+          i === len - 1 &&
+          len > 1 &&
+          !this.isCreateNewNode(node[index].type)
+        ) {
           node.push(newNode)
+          treeIndexes.pop()
         }
 
-        node = node[index].children
+        if (
+          !(i === len - 1 && len > 1) ||
+          this.isCreateNewNode(node[index].type)
+        ) {
+          node = node[index].children
+        }
       }
 
       this.sortWNode(node)
 
       this.$nextTick(() => {
-        const editingWNodeIndex = node.findIndex(element => element.id === newNode.id)
+        const editingWNodeIndex = node.findIndex(
+          element => element.id === newNode.id
+        )
         let editingWNode = {
           wNode: {},
           parentWNodeIndexsAndWNodeIndex: [],
           status: ''
         }
-        let indexes = []
-
-        indexes = [...parentWNodeIndexsAndWNodeIndex]
-        indexes.push(editingWNodeIndex)
+        treeIndexes.push(editingWNodeIndex)
 
         editingWNode = {
-          wNode: newNode,
-          parentWNodeIndexsAndWNodeIndex: indexes,
+          wNode: JSON.parse(JSON.stringify(newNode)),
+          parentWNodeIndexsAndWNodeIndex: JSON.parse(
+            JSON.stringify(treeIndexes)
+          ),
           status: 'new'
         }
 
         this.SET_EDITING_W_NODE(editingWNode)
         this.SET_NEXT_W_NODE_ID()
       })
-
-      // const selectedWNode = Object.assign({}, this.getSelectedWNode())
-
-      // if (!Object.entries(selectedWNode).length) return
-
-      // if (this.isCreateNewNode(selectedWNode.type)) {
-      //   this.setSelectedWNodeChildPush(newNode)
-      // } else {
-      //   this.setSelectedParentWNodeChildPush(newNode)
-      // }
-
-      // this.$nextTick(() => {})
     },
     handleNewTemplateClick() {},
     isCreateNewNode(type) {
       const items = ['folder', 'work']
 
-      return items.find(item => type === item)
+      return items.includes(type)
     },
-    emitPassSelectedWnode(wNode, parentNodes) {
-      this.selectedWNode = wNode
-      this.selectedParentNodes = parentNodes
-    },
-    ...mapActions(['SET_NEXT_W_NODE_ID', 'SET_SELECTED_W_NODE', 'SET_EDITING_W_NODE'])
+    ...mapActions([
+      'SET_NEXT_W_NODE_ID',
+      'SET_SELECTED_W_NODE',
+      'SET_EDITING_W_NODE'
+    ])
   }
 }
 </script>

@@ -46,7 +46,6 @@
       :key="node.id" 
       :depth="increaseDepth" 
       :collapseAll="collapseAll" 
-      @emitPassSelectedWnode="emitPassSelectedWnode"
       @emitChildNodeFilter="emitChildNodeFilter"
     />
   </li>
@@ -181,7 +180,9 @@ export default {
       let iconClass = ''
 
       if (this.wNode.type === 'folder') {
-        iconClass = this.type.icons.folder = this.isOpen ? 'mdi-folder-open' : 'mdi-folder'
+        iconClass = this.type.icons.folder = this.isOpen
+          ? 'mdi-folder-open'
+          : 'mdi-folder'
       }
 
       iconClass = `mdi ${this.type.icons[this.wNode.type]}`
@@ -211,6 +212,16 @@ export default {
       }
     },
     editingWNode() {
+      // const treeIndexes = this.editingWNode.parentWNodeIndexsAndWNodeIndex
+
+      // id 와 id를 비교해야하고, vuex에 id들도 배열에 담아야 할 듯?
+      // if (
+      //   this.wNode.id === treeIndexes[treeIndexes.length - 2] &&
+      //   !this.isOpen
+      // ) {
+      //   this.isOpen = true
+      // }
+
       if (this.wNode.id === this.editingWNode.wNode.id) {
         this.isEdit = true
 
@@ -231,7 +242,7 @@ export default {
       event.dataTransfer.effectAllowed = 'move'
 
       this.SET_DRAG_W_NODE({
-        wNode: this.wNode,
+        wNode: JSON.parse(JSON.stringify(this.wNode)),
         parentWNodeId: this.parentWNodeIds[lastIndex],
         parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
       })
@@ -243,7 +254,11 @@ export default {
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
-        if (_dragOverTime - _dragEnterStartTime >= delayTime && !this.isOpen && this.hasChildren) {
+        if (
+          _dragOverTime - _dragEnterStartTime >= delayTime &&
+          !this.isOpen &&
+          this.hasChildren
+        ) {
           this.isOpen = true
         }
       } else {
@@ -268,7 +283,9 @@ export default {
         this.SET_DROP_W_NODE({
           id: this.wNode.id,
           parentWNodeId: this.parentWNodeIds[len - 1],
-          parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
+          parentWNodeIndexsAndWNodeIndex: JSON.parse(
+            JSON.stringify(this.parentWNodeIndexsAndWNodeIndex)
+          )
         })
       }
 
@@ -280,13 +297,12 @@ export default {
       this.SET_SELECTED_W_NODE({
         wNode: JSON.parse(JSON.stringify(this.wNode)),
         parentWNodeId: this.parentWNodeIds[len - 1],
-        parentWNodeIndexsAndWNodeIndex: this.parentWNodeIndexsAndWNodeIndex
+        parentWNodeIndexsAndWNodeIndex: JSON.parse(
+          JSON.stringify(this.parentWNodeIndexsAndWNodeIndex)
+        )
       })
 
       this.nodeOpen()
-    },
-    emitPassSelectedWnode(wNode, parentNodes) {
-      this.$emit('emitPassSelectedWnode', wNode, parentNodes)
     },
     nodeOpen() {
       this.isOpen = !this.isOpen && this.hasChildren
@@ -312,7 +328,9 @@ export default {
       this.$emit('emitChildNodeFilter', this.wNode.id)
     },
     emitChildNodeFilter(childId) {
-      this.wNode.children = this.wNode.children.filter(child => child.id !== childId)
+      this.wNode.children = this.wNode.children.filter(
+        child => child.id !== childId
+      )
     },
     ...mapActions([
       'SET_SELECTED_W_NODE',
