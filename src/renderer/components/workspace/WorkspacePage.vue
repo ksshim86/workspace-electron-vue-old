@@ -78,22 +78,22 @@ export default {
     tree: [],
     items: [
       {
-        sid: 1,
+        id: 1,
         name: '.git',
         type: 'work',
         path: '',
         edit: false
       },
       {
-        sid: 2,
+        id: 2,
         name: 'node_modules',
         type: 'work',
         path: '',
-        edit: true,
+        edit: false,
         children: [
           {
-            sid: 10,
-            name: 'testtest',
+            id: 3,
+            name: 'AAA',
             type: 'folder',
             path: '',
             edit: false
@@ -101,53 +101,58 @@ export default {
         ]
       },
       {
-        sid: 3,
+        id: 4,
         name: '전표',
         type: 'work',
         path: '',
         edit: false,
         children: [
           {
-            sid: 4,
-            name: '템플릿',
+            id: 5,
+            name: 'BBB',
             type: 'folder',
             path: '',
             edit: false,
             children: [
               {
-                sid: 5,
+                id: 6,
                 name: 'logo.png',
                 type: 'png',
                 path: '',
                 edit: false,
-                file: 'png',
                 children: []
               }
             ]
           },
           {
-            sid: 6,
+            id: 7,
             name: 'favicon.ico',
             type: 'png',
             path: '',
             edit: false,
-            file: 'png',
             children: []
           },
           {
-            sid: 7,
+            id: 8,
             name: 'indexxxxxxxxxxxxxxxxxxxxxxxxxxx.html',
             type: 'html',
             path: '',
             edit: false,
-            file: 'html',
+            children: []
+          },
+          {
+            id: 9,
+            name: 'CCC',
+            type: 'folder',
+            path: '',
+            edit: false,
             children: []
           }
         ]
       }
     ]
   }),
-  mounted() { },
+  mounted() {},
   methods: {
     onResize(x, y, width, height) {
       this.x = x
