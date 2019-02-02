@@ -1,32 +1,75 @@
 <template>
-  <v-container fill-height fluid grid-list-xl class="pa-0">
-
-    <v-card class="mr-3" min-width="200" width="200" style="height: 100%;">
-      <w-tree-view :nodes="items"></w-tree-view>
+  <v-container
+    fill-height
+    fluid
+    grid-list-xl
+    class="pa-0"
+  >
+    <v-card
+      class="mr-3"
+      min-width="200"
+      width="200"
+      style="height: 100%;"
+    >
+      <w-tree-view :nodes="items" />
     </v-card>
-    <v-layout wrap wtest class="ma-0" style="height: 100%;">
-      <v-flex md12 sm12 lg4 pt-0 mt-1>
-        <v-card color="#27ae60" dark class="mb-1">
+    <v-layout
+      wrap
+      wtest
+      class="ma-0"
+      style="height: 100%;"
+    >
+      <v-flex
+        md12
+        sm12
+        lg4
+        pt-0
+        mt-1
+      >
+        <v-card
+          color="#27ae60"
+          dark
+          class="mb-1"
+        >
           <v-card-title class="title font-weight-medium">
-            <v-icon class="mr-2">mdi-card-outline</v-icon>
+            <v-icon class="mr-2">
+              mdi-card-outline
+            </v-icon>
             TO DO
           </v-card-title>
         </v-card>
         <v-card class="my-2">
           <v-card-title class="py-0 px-3">
-            <span class="grey--text text-truncate">VueJSVueJS</span>
-            <v-divider class="mx-1 white" vertical />
-            <span class="font-weight-black">WS-2</span>
+            <span class="grey--text text-truncate">
+              VueJSVueJS
+            </span>
+            <v-divider
+              class="mx-1 white"
+              vertical
+            />
+            <span class="font-weight-black">
+              WS-2
+            </span>
             <v-spacer />
-            <v-btn icon small class="mr-0">
+            <v-btn
+              icon
+              small
+              class="mr-0"
+            >
               <v-icon>mdi-dots-horizontal</v-icon>
             </v-btn>
           </v-card-title>
           <v-card-title class="py-1">
-            <span class="text-truncate">Work 등록 개발</span>
+            <span class="text-truncate">
+              Work 등록 개발
+            </span>
           </v-card-title>
           <v-card-title class="py-1">
-            <v-btn icon small class="ml-0">
+            <v-btn
+              icon
+              small
+              class="ml-0"
+            >
               <v-icon>mdi-folder-open</v-icon>
             </v-btn>
             <v-spacer />
@@ -34,18 +77,42 @@
           </v-card-title>
         </v-card>
       </v-flex>
-      <v-flex md12 sm12 lg4 pt-0 mt-1>
-        <v-card color="#e74c3c" dark class="mb-1">
+      <v-flex
+        md12
+        sm12
+        lg4
+        pt-0
+        mt-1
+      >
+        <v-card
+          color="#e74c3c"
+          dark
+          class="mb-1"
+        >
           <v-card-title class="title font-weight-medium">
-            <v-icon class="mr-2">mdi-progress-check</v-icon>
+            <v-icon class="mr-2">
+              mdi-progress-check
+            </v-icon>
             IN PROGRESS
           </v-card-title>
         </v-card>
       </v-flex>
-      <v-flex md12 sm12 lg4 pt-0 mt-1>
-        <v-card color="#3498db" dark class="mb-1">
+      <v-flex
+        md12
+        sm12
+        lg4
+        pt-0
+        mt-1
+      >
+        <v-card
+          color="#3498db"
+          dark
+          class="mb-1"
+        >
           <v-card-title class="title font-weight-medium">
-            <v-icon class="mr-2">mdi-checkbox-marked-circle</v-icon>
+            <v-icon class="mr-2">
+              mdi-checkbox-marked-circle
+            </v-icon>
             DONE
           </v-card-title>
         </v-card>
@@ -55,13 +122,11 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
 import Cmmn from '../cmmn'
 
 export default {
   components: {
-    ...Cmmn,
-    draggable
+    ...Cmmn
   },
   data: () => ({
     open: ['public'],
@@ -200,7 +265,7 @@ export default {
 
 /* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
 ::-webkit-scrollbar-thumb {
-  /* This is the EXACT color of Mac OS scrollbars. 
+  /* This is the EXACT color of Mac OS scrollbars.
      Yes, I pulled out digital color meter */
   background: rgba(43, 52, 56, 0.4);
 }

@@ -24,13 +24,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import { ipcRenderer } from 'electron'
 import Cmmn from './components/cmmn'
-import TutorialPage from './components/tutorial/TutorialPage'
 
 export default {
-  name: 'workspace',
+  name: 'Workspace',
   components: {
-    ...Cmmn,
-    TutorialPage
+    ...Cmmn
   },
   data() {
     return {}
@@ -45,14 +43,14 @@ export default {
       }
     }
   },
-  methods: {
-    ...mapGetters(['getWorkspaceIsEmpty']),
-    ...mapActions(['setWorkspaceIsEmpty'])
-  },
   mounted() {
     ipcRenderer.on('workspace-path', (event, data) => {
       if (data === '') this.workspaceIsEmpty = data
     })
+  },
+  methods: {
+    ...mapGetters(['getWorkspaceIsEmpty']),
+    ...mapActions(['setWorkspaceIsEmpty'])
   }
 }
 </script>
@@ -60,7 +58,5 @@ export default {
 <style>
 html {
   overflow-y: hidden;
-}
-.frame-bar {
 }
 </style>

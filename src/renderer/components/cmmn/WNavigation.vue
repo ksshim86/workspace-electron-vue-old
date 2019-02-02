@@ -1,7 +1,21 @@
 <template>
-  <v-navigation-drawer v-model="drawer" mobile-break-point="991" width="200" fixed clipped app>
-    <v-list class="pl-2" dense>
-      <v-list-tile v-for="item in items" :key="item.title" :to="item.to">
+  <v-navigation-drawer
+    v-model="drawer"
+    mobile-break-point="991"
+    width="200"
+    fixed
+    clipped
+    app
+  >
+    <v-list
+      class="pl-2"
+      dense
+    >
+      <v-list-tile
+        v-for="item in items"
+        :key="item.title"
+        :to="item.to"
+      >
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-tile-action>

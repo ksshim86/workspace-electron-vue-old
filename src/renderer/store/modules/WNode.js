@@ -24,6 +24,7 @@ const state = {
       path: '',
       children: []
     },
+    parentAndWNodeIds: [],
     parentWNodeIndexsAndWNodeIndex: []
   },
   editingWNode: {
@@ -34,6 +35,7 @@ const state = {
       path: '',
       children: []
     },
+    parentAndWNodeIds: [],
     parentWNodeIndexsAndWNodeIndex: [],
     status: '' // new or modify
   }

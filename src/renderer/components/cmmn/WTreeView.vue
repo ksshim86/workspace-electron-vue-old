@@ -1,29 +1,52 @@
 <template>
-  <div class="w-tree-view" @click="handleNodeListDivClicked">
-    <div class="w-tree-view-menu" :style="style.menu">
-      <v-btn class="ma-0" icon small @click="handleCollapseAllClick">
+  <div
+    class="w-tree-view"
+    @click="handleNodeListDivClicked"
+  >
+    <div
+      class="w-tree-view-menu"
+      :style="style.menu"
+    >
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleCollapseAllClick"
+      >
         <v-icon class="mdi mdi-collapse-all-outline" />
       </v-btn>
-      <v-btn class="ma-0" icon small @click="handleNewFolderClick">
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleNewFolderClick"
+      >
         <v-icon class="mdi mdi-folder-plus-outline" />
       </v-btn>
-      <v-btn class="ma-0" icon small @click="handleNewTemplateClick">
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleNewTemplateClick"
+      >
         <v-icon class="mdi mdi-file-plus" />
       </v-btn>
     </div>
     <v-divider />
-    <div class="w-tree-view-node-list" :style="style.wtreeview">
+    <div
+      class="w-tree-view-node-list"
+      :style="style.wtreeview"
+    >
       <ul>
-        <w-node 
-          ref="wNode" 
-          v-for="(node, index) in wNodes" 
+        <w-node
+          v-for="(node, index) in wNodes"
+          :key="node.id"
+          ref="wNode"
           :nodes="node"
-          :parentWNodeIndex="index"
-          :key="node.id" 
-          :collapseAll="collapseAll" 
-          @emitCollapseAllChange="emitCollapseAllChange" 
-        >
-        </w-node>
+          :parent-w-node-index="index"
+          :collapse-all="collapseAll"
+          @emitCollapseAllChange="emitCollapseAllChange"
+        />
       </ul>
     </div>
   </div>
@@ -34,7 +57,7 @@ import { mapGetters, mapActions } from 'vuex'
 import WNode from './WNode'
 
 export default {
-  name: 'w-tree-view',
+  name: 'WTreeView',
   components: { WNode },
   props: {
     nodes: {
@@ -245,6 +268,7 @@ export default {
       }
       const { wNode } = this.selectedWNode
       const treeIndexes = [...this.selectedWNode.parentWNodeIndexsAndWNodeIndex]
+      const parentAndWNodeIds = [...this.selectedWNode.parentAndWNodeIds]
       const len = treeIndexes.length
       let index = treeIndexes[0]
       let node = this.wNodes
@@ -281,13 +305,16 @@ export default {
         )
         let editingWNode = {
           wNode: {},
+          parentAndWNodeIds: [],
           parentWNodeIndexsAndWNodeIndex: [],
           status: ''
         }
         treeIndexes.push(editingWNodeIndex)
+        parentAndWNodeIds.push(newNode.id)
 
         editingWNode = {
           wNode: JSON.parse(JSON.stringify(newNode)),
+          parentAndWNodeIds: JSON.parse(JSON.stringify(parentAndWNodeIds)),
           parentWNodeIndexsAndWNodeIndex: JSON.parse(
             JSON.stringify(treeIndexes)
           ),
