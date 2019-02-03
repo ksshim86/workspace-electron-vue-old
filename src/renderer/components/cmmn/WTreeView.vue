@@ -116,7 +116,6 @@ export default {
   methods: {
     // children이 없는 node children 속성 추가
     initWNode(node) {
-      // props인 경우는 this.$set(node, 'children', [])
       if (!node.children) this.$set(node, 'children', [])
 
       for (let i = 0; i < node.children.length; i += 1) {
@@ -212,7 +211,8 @@ export default {
         parentWNodeIndexsAndWNodeIndex: [],
         status: ''
       }
-      const { wNode, status } = this.editingWNode
+      const editingWNode = this.editingWNode.wNode
+      const { status } = this.editingWNode
       const editingWNodeTreeIndexes = this.editingWNode
         .parentWNodeIndexsAndWNodeIndex
       const treeLen = editingWNodeTreeIndexes.length
@@ -221,7 +221,7 @@ export default {
       if (status === '') return
 
       if (status === 'new') {
-        if (wNode.name === '' && !wNode.name.length) {
+        if (editingWNode.name === '' && !editingWNode.name.length) {
           // 1. node를 제거
           for (let i = 0; i < treeLen; i += 1) {
             const index = editingWNodeTreeIndexes[i]
@@ -232,9 +232,21 @@ export default {
               node = node[index].children
             }
           }
-          // 2. editingWNode를 초기화
-          this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
+        } else {
+          // editingWNode를 edit false
+          // wnodes에 name update
+          for (let i = 0; i < treeLen; i += 1) {
+            const index = editingWNodeTreeIndexes[i]
+
+            if (i === treeLen - 1) {
+              node[index].name = editingWNode.name
+            } else {
+              node = node[index].children
+            }
+          }
         }
+
+        this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
       }
 
       if (status === 'modify') {

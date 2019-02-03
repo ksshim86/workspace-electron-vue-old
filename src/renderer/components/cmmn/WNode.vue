@@ -240,11 +240,16 @@ export default {
     editingWNode(newVal, oldVal) {
       const notEditing = ''
 
+      if (newVal.status === notEditing && oldVal.status === 'new') {
+        if (this.wNode.name !== '' && this.wNode.name.length) {
+          this.isEdit = false
+        }
+      }
+
       if (newVal.status !== notEditing) {
         const { parentAndWNodeIds } = newVal
         const parentIndex = parentAndWNodeIds.length - 2
 
-        // id 와 id를 비교해야하고, vuex에 id들도 배열에 담아야 할 듯?
         if (this.wNode.id === parentAndWNodeIds[parentIndex] && !this.isOpen) {
           this.isOpen = true
         }
