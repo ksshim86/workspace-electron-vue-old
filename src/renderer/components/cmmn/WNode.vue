@@ -1,55 +1,19 @@
 <template>
   <li class="w-node">
-    <div
-      class="wrapper"
-      :class="{select: isSelected}"
-      :draggable="isDraggable"
-      @dragstart.stop="dragstart"
-      @dragover.stop="dragOver"
-      @drop.stop="drop"
-      @dragenter="dragEnter"
-      @contextmenu.prevent.stop="handleRightClicked"
-    >
-      <div
-        :style="paddingLeft"
-        style="display: flex;"
-        @click.stop="handleNodeClick"
-      >
-        <v-icon
-          v-if="hasChildren"
-          :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']"
-        />
-        <v-icon
-          :class="['w-node-icon', iconClass]"
-          :style="hasChildren ? '' : 'padding-left: 24px;'"
-        />
+    <div class="wrapper" :class="{select: isSelected}" :draggable="isDraggable" @dragstart.stop="dragstart" @dragover.stop="dragOver" @drop.stop="drop" @dragenter="dragEnter" @dragend="dragEnd" @contextmenu.prevent.stop="handleRightClicked">
+      <div :style="paddingLeft" style="display: flex;" @click.stop="handleNodeClick">
+        <v-icon v-if="hasChildren" :class="['mdi', isOpen ? 'mdi-menu-down' : 'mdi-menu-right']" />
+        <v-icon :class="['w-node-icon', iconClass]" :style="hasChildren ? '' : 'padding-left: 24px;'" />
         <div :class="['pr-3', 'pl-1']">
-          <p
-            v-if="!isEdit"
-            :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']"
-          >
+          <p v-if="!isEdit" ref="nodeName" :class="['body-1', 'font-weight-bold', 'text-xs-center', 'ma-0', 'pt-1']">
             {{ wNode.name }}
           </p>
-          <v-text-field
-            v-if="isEdit"
-            ref="textFieldForName"
-            v-model="wNode.name"
-            required
-            hide-details
-            class="ma-0"
-            @change="nameEditing"
-          />
+          <v-text-field v-if="isEdit" ref="textFieldForName" v-model="wNode.name" required hide-details class="ma-0" @change="nameEditing" />
         </div>
       </div>
     </div>
     <div class="text-xs-center">
-      <v-menu
-        v-model="isOptionsOpen"
-        :position-x="options.x"
-        :position-y="options.y"
-        absolute
-        offset-y
-      >
+      <v-menu v-model="isOptionsOpen" :position-x="options.x" :position-y="options.y" absolute offset-y>
         <v-card flat>
           <v-card-title class="ma-0 py-1 px-2">
             AAAA
@@ -60,18 +24,7 @@
         </v-card>
       </v-menu>
     </div>
-    <w-node
-      v-for="(node, index) in wNode.children"
-      v-show="isOpen"
-      :key="node.id"
-      :nodes="node"
-      :parent-w-node-index="index"
-      :parent-w-node-ids="parentAndWNodeIds"
-      :parent-w-node-indexs="parentWNodeIndexsAndWNodeIndex"
-      :depth="increaseDepth"
-      :collapse-all="collapseAll"
-      @emitChildNodeFilter="emitChildNodeFilter"
-    />
+    <w-node v-for="(node, index) in wNode.children" v-show="isOpen" :key="node.id" :nodes="node" :parent-w-node-index="index" :parent-w-node-ids="parentAndWNodeIds" :parent-w-node-indexs="parentWNodeIndexsAndWNodeIndex" :depth="increaseDepth" :collapse-all="collapseAll" @emitChildNodeFilter="emitChildNodeFilter" />
   </li>
 </template>
 
@@ -266,15 +219,25 @@ export default {
       }
     }
   },
-  created() {},
-  mounted() {},
-  updated() {},
+  created() { },
+  mounted() { },
+  updated() { },
   methods: {
     dragstart(event) {
       const len = this.parentWNodeIds.length
       const lastIndex = len - 1
 
-      event.dataTransfer.effectAllowed = 'move'
+      // 아래와 같이 element 추가로 설정 가능 지금은 빈 텍스트로
+      // const element = document.createElement('p')
+
+      // event.dataTransfer.effectAllowed = 'move'
+
+      // element.textContent = this.wNode.name
+      // element.id = 'drag-ghost'
+
+      // document.body.appendChild(element)
+
+      // event.dataTransfer.setDragImage(element, -17, -15)
 
       this.SET_DRAG_W_NODE({
         wNode: JSON.parse(JSON.stringify(this.wNode)),
@@ -326,6 +289,12 @@ export default {
       }
 
       event.preventDefault()
+    },
+    dragEnd() {
+      // const ghost = document.getElementById('drag-ghost')
+      // if (ghost.parentNode) {
+      //   ghost.parentNode.removeChild(ghost)
+      // }
     },
     handleNodeClick() {
       this.SET_SELECTED_W_NODE({
