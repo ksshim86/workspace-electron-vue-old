@@ -1,52 +1,20 @@
 <template>
-  <div
-    class="w-tree-view"
-    @click="handleNodeListDivClicked"
-  >
-    <div
-      class="w-tree-view-menu"
-      :style="style.menu"
-    >
-      <v-btn
-        class="ma-0"
-        icon
-        small
-        @click="handleCollapseAllClick"
-      >
+  <div class="w-tree-view" @click="handleNodeListDivClicked">
+    <div class="w-tree-view-menu" :style="style.menu">
+      <v-btn class="ma-0" icon small @click="handleCollapseAllClick">
         <v-icon class="mdi mdi-collapse-all-outline" />
       </v-btn>
-      <v-btn
-        class="ma-0"
-        icon
-        small
-        @click="handleNewFolderClick"
-      >
+      <v-btn class="ma-0" icon small @click="handleNewFolderClick">
         <v-icon class="mdi mdi-folder-plus-outline" />
       </v-btn>
-      <v-btn
-        class="ma-0"
-        icon
-        small
-        @click="handleNewTemplateClick"
-      >
+      <v-btn class="ma-0" icon small @click="handleNewTemplateClick">
         <v-icon class="mdi mdi-file-plus" />
       </v-btn>
     </div>
     <v-divider />
-    <div
-      class="w-tree-view-node-list"
-      :style="style.wtreeview"
-    >
+    <div class="w-tree-view-node-list" :style="style.wtreeview">
       <ul>
-        <w-node
-          v-for="(node, index) in wNodes"
-          :key="node.id"
-          ref="wNode"
-          :nodes="node"
-          :parent-w-node-index="index"
-          :collapse-all="collapseAll"
-          @emitCollapseAllChange="emitCollapseAllChange"
-        />
+        <w-node v-for="(node, index) in wNodes" :key="node.id" ref="wNode" :nodes="node" :parent-w-node-index="index" :collapse-all="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" />
       </ul>
     </div>
   </div>
@@ -105,7 +73,7 @@ export default {
       this.editingWNodeSaveAndDelete()
     }
   },
-  beforeCreate() {},
+  beforeCreate() { },
   created() {
     this.wNodes = JSON.parse(JSON.stringify(this.nodes))
 
@@ -135,9 +103,9 @@ export default {
 
       if (
         dragWNodeTreeIndexes[dragLength - 2] ===
-          dropWNodeTreeIndexes[dropLength - 2] &&
+        dropWNodeTreeIndexes[dropLength - 2] &&
         dropWNodeTreeIndexes[dropLength - 1] >
-          dragWNodeTreeIndexes[dragLength - 1]
+        dragWNodeTreeIndexes[dragLength - 1]
       ) {
         dropWNodeTreeIndexes[dropLength - 1] =
           dropWNodeTreeIndexes[dropLength - 1] - 1
@@ -265,6 +233,7 @@ export default {
           path: '',
           children: []
         },
+        parentAndWNodeIds: [],
         parentWNodeIndexsAndWNodeIndex: []
       }
 
@@ -337,7 +306,7 @@ export default {
         this.SET_NEXT_W_NODE_ID()
       })
     },
-    handleNewTemplateClick() {},
+    handleNewTemplateClick() { },
     isCreateNewNode(type) {
       const items = ['folder', 'work']
 
