@@ -39,18 +39,21 @@ export default {
         return this.getWorkspaceIsEmpty()
       },
       set(val) {
-        this.setWorkspaceIsEmpty(val)
+        this.SET_WORKSPACE_ISEMPTY(val)
       }
     }
   },
   mounted() {
     ipcRenderer.on('workspace-path', (event, data) => {
-      if (data === '') this.workspaceIsEmpty = data
+      if (data !== '') {
+        this.workspaceIsEmpty = false
+        this.SET_WORKSPACE_PATH(data)
+      }
     })
   },
   methods: {
     ...mapGetters(['getWorkspaceIsEmpty']),
-    ...mapActions(['setWorkspaceIsEmpty'])
+    ...mapActions(['SET_WORKSPACE_ISEMPTY', 'SET_WORKSPACE_PATH'])
   }
 }
 </script>

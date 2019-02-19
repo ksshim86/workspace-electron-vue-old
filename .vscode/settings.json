@@ -1,17 +1,28 @@
 {
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "vetur.format.defaultFormatter.js": "vscode-typescript",
+  "files.eol": "\r\n",
+  "editor.fontSize": 14,
+  "editor.rulers": [
+    80
+  ],
+  "eslint.autoFixOnSave": true,
   "eslint.validate": [
-    "javascript",
-    "javascriptreact",
     {
       "language": "vue",
       "autoFix": true
+    },
+    {
+      "language": "html",
+      "autoFix": true
+    },
+    {
+      "language": "javascript",
+      "autoFix": true
+    },
+    {
+      "language": "javascriptreact",
+      "autoFix": true
     }
-  ],
-  "vetur.format.defaultFormatter.html": "js-beautify-html",
-  "eslint.autoFixOnSave": true,
-  "editor.formatOnSave": true,
-  "vetur.format.defaultFormatter.js": "vscode-typescript",
-  "files.eol": "\r\n",
-  "prettier.singleQuote": true,
-  "prettier.disableLanguages": []
+  ]
 }

@@ -37,7 +37,8 @@ const state = {
     },
     parentAndWNodeIds: [],
     parentWNodeIndexsAndWNodeIndex: [],
-    status: '' // new or modify
+    status: '', // new or modify
+    nameCheck: true
   }
 }
 const getters = {
@@ -66,6 +67,9 @@ const mutations = {
   },
   SET_EDITING_W_NODE_NAME: (state, value) => {
     state.editingWNode.wNode.name = value
+  },
+  SET_EDITING_W_NODE_NAME_CHECK: (state, value) => {
+    state.editingWNode.nameCheck = value
   }
 }
 
@@ -87,6 +91,9 @@ const actions = {
   },
   SET_EDITING_W_NODE_NAME: ({ commit }, payload) => {
     commit('SET_EDITING_W_NODE_NAME', payload)
+  },
+  SET_EDITING_W_NODE_NAME_CHECK: ({ commit }, payload) => {
+    commit('SET_EDITING_W_NODE_NAME_CHECK', payload)
   }
 }
 

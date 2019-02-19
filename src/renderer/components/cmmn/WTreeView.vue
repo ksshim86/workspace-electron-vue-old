@@ -1,20 +1,52 @@
 <template>
-  <div class="w-tree-view" @click="handleNodeListDivClicked">
-    <div class="w-tree-view-menu" :style="style.menu">
-      <v-btn class="ma-0" icon small @click="handleCollapseAllClick">
+  <div
+    class="w-tree-view"
+    @click="handleNodeListDivClicked"
+  >
+    <div
+      class="w-tree-view-menu"
+      :style="style.menu"
+    >
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleCollapseAllClick"
+      >
         <v-icon class="mdi mdi-collapse-all-outline" />
       </v-btn>
-      <v-btn class="ma-0" icon small @click="handleNewFolderClick">
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleNewFolderClick"
+      >
         <v-icon class="mdi mdi-folder-plus-outline" />
       </v-btn>
-      <v-btn class="ma-0" icon small @click="handleNewTemplateClick">
+      <v-btn
+        class="ma-0"
+        icon
+        small
+        @click="handleNewWorkClick"
+      >
         <v-icon class="mdi mdi-file-plus" />
       </v-btn>
     </div>
     <v-divider />
-    <div class="w-tree-view-node-list" :style="style.wtreeview">
+    <div
+      class="w-tree-view-node-list"
+      :style="style.wtreeview"
+    >
       <ul>
-        <w-node v-for="(node, index) in wNodes" :key="node.id" ref="wNode" :nodes="node" :parent-w-node-index="index" :collapse-all="collapseAll" @emitCollapseAllChange="emitCollapseAllChange" />
+        <w-node
+          v-for="(node, index) in wNodes"
+          :key="node.id"
+          ref="wNode"
+          :nodes="node"
+          :parent-w-node-index="index"
+          :collapse-all="collapseAll"
+          @emitCollapseAllChange="emitCollapseAllChange"
+        />
       </ul>
     </div>
   </div>
@@ -59,27 +91,40 @@ export default {
       dragWNode: 'GET_DRAG_W_NODE',
       selectedWNode: 'GET_SELECTED_W_NODE',
       nextWNodeId: 'GET_NEXT_W_NODE_ID',
-      editingWNode: 'GET_EDITING_W_NODE'
+      editingWNode: 'GET_EDITING_W_NODE',
+      workspacePath: 'GET_WORKSPACE_PATH'
     })
   },
   watch: {
-    wNodes() {
-      console.log('treeview nodes watch')
-    },
+    wNodes() {},
     doneDrop(newVal, oldVal) {
       this.moveChild(newVal)
     },
     selectedWNode(newVal, oldVal) {
       this.editingWNodeSaveAndDelete()
+    },
+    editingWNode(newVal, oldVal) {
+      let node = this.wNodes
+      const { parentWNodeIndexsAndWNodeIndex } = oldVal
+      const len = oldVal.parentWNodeIndexsAndWNodeIndex.length - 1
+
+      if (newVal.status === '' && oldVal.status !== '') {
+        for (let i = 0; i < len; i += 1) {
+          const idx = parentWNodeIndexsAndWNodeIndex[i]
+          node = node[idx].children
+        }
+
+        this.sortWNode(node)
+      }
     }
   },
   beforeCreate() { },
   created() {
-    this.wNodes = JSON.parse(JSON.stringify(this.nodes))
+    // this.wNodes = JSON.parse(JSON.stringify(this.nodes))
 
-    for (let i = 0; i < this.wNodes.length; i += 1) {
-      this.initWNode(this.wNodes[i])
-    }
+    // for (let i = 0; i < this.wNodes.length; i += 1) {
+    //   this.initWNode(this.wNodes[i])
+    // }
   },
   methods: {
     // children이 없는 node children 속성 추가
@@ -177,7 +222,8 @@ export default {
           children: []
         },
         parentWNodeIndexsAndWNodeIndex: [],
-        status: ''
+        status: '',
+        nameCheck: true
       }
       const editingWNode = this.editingWNode.wNode
       const { status } = this.editingWNode
@@ -201,13 +247,20 @@ export default {
             }
           }
         } else {
-          // editingWNode를 edit false
-          // wnodes에 name update
+          // name 중복 체크
           for (let i = 0; i < treeLen; i += 1) {
             const index = editingWNodeTreeIndexes[i]
 
             if (i === treeLen - 1) {
               node[index].name = editingWNode.name
+
+              const name =
+                node.find(
+                  (element, elementIndex) =>
+                    index !== elementIndex && element.name === editingWNode.name
+                )
+
+              console.log('name: ', name)
             } else {
               node = node[index].children
             }
@@ -247,6 +300,21 @@ export default {
         path: '',
         children: []
       }
+
+      this.createFolder(newNode)
+    },
+    handleNewWorkClick() {
+      const newNode = {
+        id: this.nextWNodeId,
+        name: '',
+        type: 'work',
+        path: this.workspacePath,
+        children: []
+      }
+
+      this.createWork(newNode)
+    },
+    createFolder(newNode = {}) {
       const { wNode } = this.selectedWNode
       const treeIndexes = [...this.selectedWNode.parentWNodeIndexsAndWNodeIndex]
       const parentAndWNodeIds = [...this.selectedWNode.parentAndWNodeIds]
@@ -256,17 +324,19 @@ export default {
 
       if (wNode.id === 0) return
 
+      newNode.path = wNode.path
+
       for (let i = 0; i < len; i += 1) {
         index = treeIndexes[i]
 
         if (i === len - 1 && this.isCreateNewNode(node[index].type)) {
-          node[index].children.push(newNode)
+          node[index].children.unshift(newNode)
         } else if (
           i === len - 1 &&
           len > 1 &&
           !this.isCreateNewNode(node[index].type)
         ) {
-          node.push(newNode)
+          node.unshift(newNode)
           treeIndexes.pop()
         }
 
@@ -278,8 +348,6 @@ export default {
         }
       }
 
-      this.sortWNode(node)
-
       this.$nextTick(() => {
         const editingWNodeIndex = node.findIndex(
           element => element.id === newNode.id
@@ -288,8 +356,10 @@ export default {
           wNode: {},
           parentAndWNodeIds: [],
           parentWNodeIndexsAndWNodeIndex: [],
-          status: ''
+          status: '',
+          nameCheck: true
         }
+
         treeIndexes.push(editingWNodeIndex)
         parentAndWNodeIds.push(newNode.id)
 
@@ -299,14 +369,40 @@ export default {
           parentWNodeIndexsAndWNodeIndex: JSON.parse(
             JSON.stringify(treeIndexes)
           ),
-          status: 'new'
+          status: 'new',
+          nameCheck: true
         }
 
         this.SET_EDITING_W_NODE(editingWNode)
         this.SET_NEXT_W_NODE_ID()
       })
     },
-    handleNewTemplateClick() { },
+    createWork(newNode = {}) {
+      // 에디팅중인 파일이 있으면 취소시켜야 한다.
+      this.editingWNodeSaveAndDelete()
+      // selected노드와 상관없이 루트에 push
+      this.wNodes.push(newNode)
+
+      this.$nextTick(() => {
+        const editingWNodeIndex = this.wNodes.findIndex(
+          element => element.id === newNode.id
+        )
+        const editingWNode = {
+          wNode: {},
+          parentAndWNodeIds: [],
+          parentWNodeIndexsAndWNodeIndex: [],
+          status: 'new',
+          nameCheck: true
+        }
+
+        editingWNode.wNode = JSON.parse(JSON.stringify(newNode))
+        editingWNode.parentAndWNodeIds.push(newNode.id)
+        editingWNode.parentWNodeIndexsAndWNodeIndex.push(editingWNodeIndex)
+
+        this.SET_EDITING_W_NODE(editingWNode)
+        this.SET_NEXT_W_NODE_ID()
+      })
+    },
     isCreateNewNode(type) {
       const items = ['folder', 'work']
 
