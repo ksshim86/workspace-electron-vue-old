@@ -158,7 +158,6 @@ export default {
 
       if (dropLength === 1) {
         node.push(JSON.parse(JSON.stringify(child)))
-        // this.$set(node, node.length, child)
         this.sortWNode(node)
       } else {
         for (let i = 1; i < dropLength; i += 1) {
@@ -254,13 +253,13 @@ export default {
             if (i === treeLen - 1) {
               node[index].name = editingWNode.name
 
-              const name =
-                node.find(
+              const duplicateIndex =
+                node.findIndex(
                   (element, elementIndex) =>
                     index !== elementIndex && element.name === editingWNode.name
                 )
 
-              console.log('name: ', name)
+              if (duplicateIndex !== -1) node.splice(index, 1)
             } else {
               node = node[index].children
             }

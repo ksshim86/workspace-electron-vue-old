@@ -122,18 +122,6 @@ export default {
         }
       }
     },
-    parentNodes: {
-      type: Object,
-      default() {
-        return {
-          id: 0,
-          name: '',
-          type: '',
-          path: '',
-          children: []
-        }
-      }
-    },
     depth: {
       type: Number,
       default: 0
@@ -233,6 +221,9 @@ export default {
 
       return klass
     },
+    wNodeName() {
+      return this.wNode.name
+    },
     nameCheck() {
       return this.editingWNode.nameCheck
     },
@@ -298,9 +289,13 @@ export default {
         }
       }
     },
-    'wNode.name': function (newVal, oldVal) {
-      this.wNode.path = `${this.path}\\${newVal}`
-      this.$emit('emitCheckDuplicateName', newVal, this.parentWNodeIndex)
+    wNodeName(newVal, oldVal) {
+      console.log(`${newVal} : ${oldVal}`)
+      // 드래그시에도 watch를 타는걸 해결해야한다.
+      if (this.isEdit) {
+        this.wNode.path = `${this.path}\\${newVal}`
+        this.$emit('emitCheckDuplicateName', newVal, this.parentWNodeIndex)
+      }
     }
   },
   created() {
@@ -308,7 +303,8 @@ export default {
     this.path = this.nodes.path
   },
   mounted() { },
-  updated() { },
+  updated() {
+  },
   methods: {
     emitCheckDuplicateName(name, index) {
       const result =
@@ -329,14 +325,10 @@ export default {
 
       // 아래와 같이 element 추가로 설정 가능 지금은 빈 텍스트로
       // const element = document.createElement('p')
-
       // event.dataTransfer.effectAllowed = 'move'
-
       // element.textContent = this.wNode.name
       // element.id = 'drag-ghost'
-
       // document.body.appendChild(element)
-
       // event.dataTransfer.setDragImage(element, -17, -15)
 
       this.SET_DRAG_W_NODE({
