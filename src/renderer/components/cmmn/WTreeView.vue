@@ -234,7 +234,9 @@ export default {
       if (status === '') return
 
       if (status === 'new') {
-        if (editingWNode.name === '' && !editingWNode.name.length) {
+        const editingName = editingWNode.name.trim()
+
+        if (editingName === '' && !editingName.length) {
           // 1. node를 제거
           for (let i = 0; i < treeLen; i += 1) {
             const index = editingWNodeTreeIndexes[i]
@@ -251,12 +253,12 @@ export default {
             const index = editingWNodeTreeIndexes[i]
 
             if (i === treeLen - 1) {
-              node[index].name = editingWNode.name
+              node[index].name = editingName
 
               const duplicateIndex =
                 node.findIndex(
                   (element, elementIndex) =>
-                    index !== elementIndex && element.name === editingWNode.name
+                    index !== elementIndex && element.name === editingName
                 )
 
               if (duplicateIndex !== -1) node.splice(index, 1)
