@@ -290,17 +290,16 @@ export default {
       }
     },
     wNodeName(newVal, oldVal) {
-      console.log(`${newVal} : ${oldVal}`)
-      // 드래그시에도 watch를 타는걸 해결해야한다.
+      const name = newVal.trim()
+
       if (this.isEdit) {
-        this.wNode.path = `${this.path}\\${newVal}`
-        this.$emit('emitCheckDuplicateName', newVal, this.parentWNodeIndex)
+        this.$emit('emitCheckDuplicateName', name, this.parentWNodeIndex)
       }
     }
   },
   created() {
     this.wNode = this.nodes
-    this.path = this.nodes.path
+    // this.path = this.nodes.path
   },
   mounted() { },
   updated() {
@@ -373,6 +372,7 @@ export default {
 
         this.SET_DROP_W_NODE({
           id: this.wNode.id,
+          path: this.wNode.path,
           parentWNodeId: this.parentWNodeIds[lastIndex],
           parentWNodeIndexsAndWNodeIndex: JSON.parse(
             JSON.stringify(this.parentWNodeIndexsAndWNodeIndex)
@@ -420,7 +420,6 @@ export default {
       this.SET_EDITING_W_NODE_NAME(name)
     },
     handleNameEditingKeyupEnter() {
-      const { name } = this.wNode
       const initEditingWNode = {
         wNode: {
           id: 0,
@@ -434,7 +433,9 @@ export default {
         nameCheck: true
       }
 
-      if (!name.length) {
+      this.wNode.name = this.wNode.name.trim()
+
+      if (!this.wNode.name.length) {
         console.log('이름 입력해야 한다는 알림 제공')
         return
       }
@@ -443,6 +444,7 @@ export default {
         return
       }
 
+      this.wNode.path = `${this.wNode.path}\\${this.wNode.name}`
       this.isEdit = false
       this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
     },

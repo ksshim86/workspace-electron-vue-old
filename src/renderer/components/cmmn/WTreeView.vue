@@ -156,6 +156,8 @@ export default {
           dropWNodeTreeIndexes[dropLength - 1] - 1
       }
 
+      this.SET_DRAG_W_NODE_PATH(`${dropWNode.path}\\${child.name}`)
+
       if (dropLength === 1) {
         node.push(JSON.parse(JSON.stringify(child)))
         this.sortWNode(node)
@@ -253,13 +255,14 @@ export default {
             const index = editingWNodeTreeIndexes[i]
 
             if (i === treeLen - 1) {
-              node[index].name = editingName
-
               const duplicateIndex =
                 node.findIndex(
                   (element, elementIndex) =>
                     index !== elementIndex && element.name === editingName
                 )
+
+              node[index].name = editingName
+              node[index].path = `${node[index].path}\\${editingName}`
 
               if (duplicateIndex !== -1) node.splice(index, 1)
             } else {
@@ -412,7 +415,8 @@ export default {
     ...mapActions([
       'SET_NEXT_W_NODE_ID',
       'SET_SELECTED_W_NODE',
-      'SET_EDITING_W_NODE'
+      'SET_EDITING_W_NODE',
+      'SET_DRAG_W_NODE_PATH'
     ])
   }
 }
