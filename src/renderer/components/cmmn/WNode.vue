@@ -76,6 +76,7 @@
       v-show="isOpen"
       :key="node.id"
       :nodes="node"
+      :parent-path="wNode.path"
       :parent-w-node-index="index"
       :parent-w-node-ids="parentAndWNodeIds"
       :parent-w-node-indexs="parentWNodeIndexsAndWNodeIndex"
@@ -109,6 +110,10 @@ export default {
     parentWNodeIndexs: {
       type: Array,
       default: () => []
+    },
+    parentPath: {
+      type: String,
+      default: ''
     },
     nodes: {
       type: Object,
@@ -227,6 +232,11 @@ export default {
     nameCheck() {
       return this.editingWNode.nameCheck
     },
+    separator() {
+      const items = ['folder', 'work']
+
+      return items.includes(this.wNode.type) ? '\\' : ''
+    },
     ...mapGetters({
       dragWNode: 'GET_DRAG_W_NODE',
       selectedWNode: 'GET_SELECTED_W_NODE',
@@ -281,7 +291,6 @@ export default {
       if (newVal.status === oldVal.status) {
         if (this.wNode.id === this.editingWNode.wNode.id) {
           if (!newVal) {
-            console.log('이름 중복이요!')
             this.nameError = true
           } else {
             this.nameError = false
@@ -299,10 +308,15 @@ export default {
   },
   created() {
     this.wNode = this.nodes
+    this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
+    console.log(`${this.nodes.name} > created`)
     // this.path = this.nodes.path
   },
-  mounted() { },
+  mounted() {
+    console.log(`${this.nodes.name} > mounted`)
+  },
   updated() {
+    console.log(`${this.nodes.name} > updated`)
   },
   methods: {
     emitCheckDuplicateName(name, index) {
@@ -436,6 +450,7 @@ export default {
       this.wNode.name = this.wNode.name.trim()
 
       if (!this.wNode.name.length) {
+        // TODO: duplicate name alert
         console.log('이름 입력해야 한다는 알림 제공')
         return
       }
@@ -444,7 +459,7 @@ export default {
         return
       }
 
-      this.wNode.path = `${this.wNode.path}\\${this.wNode.name}`
+      this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
       this.isEdit = false
       this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
     },
@@ -455,6 +470,11 @@ export default {
       this.wNode.children = this.wNode.children.filter(
         child => child.id !== childId
       )
+    },
+    isCreateNewNode(type) {
+      const items = ['folder', 'work']
+
+      return items.includes(type)
     },
     ...mapActions([
       'SET_SELECTED_W_NODE',

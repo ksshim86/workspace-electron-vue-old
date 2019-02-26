@@ -60,9 +60,6 @@ const mutations = {
   SET_DRAG_W_NODE: (state, value) => {
     state.dragWNode = value
   },
-  SET_DRAG_W_NODE_PATH: (state, value) => {
-    state.dragWNode.wNode.path = value
-  },
   SET_DROP_W_NODE: (state, value) => {
     state.dropWNode = value
   },
@@ -83,9 +80,6 @@ const actions = {
   },
   SET_DRAG_W_NODE: ({ commit }, payload) => {
     commit('SET_DRAG_W_NODE', payload)
-  },
-  SET_DRAG_W_NODE_PATH: ({ commit }, payload) => {
-    commit('SET_DRAG_W_NODE_PATH', payload)
   },
   SET_DROP_W_NODE: ({ commit }, payload) => {
     commit('SET_DROP_W_NODE', payload)
