@@ -90,6 +90,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { ipcRenderer } from 'electron'
 
 let prevRightClickedObj = null
 let _dragEnterNodeId = -1
@@ -451,7 +452,6 @@ export default {
 
       if (!this.wNode.name.length) {
         // TODO: duplicate name alert
-        console.log('이름 입력해야 한다는 알림 제공')
         return
       }
 
@@ -462,6 +462,9 @@ export default {
       this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
       this.isEdit = false
       this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
+
+      // TODO: ipc call, window directory create
+      ipcRenderer.send('send-directory-create', this.wNode)
     },
     childNodeFilter() {
       this.$emit('emitChildNodeFilter', this.wNode.id)
@@ -470,11 +473,6 @@ export default {
       this.wNode.children = this.wNode.children.filter(
         child => child.id !== childId
       )
-    },
-    isCreateNewNode(type) {
-      const items = ['folder', 'work']
-
-      return items.includes(type)
     },
     ...mapActions([
       'SET_SELECTED_W_NODE',
