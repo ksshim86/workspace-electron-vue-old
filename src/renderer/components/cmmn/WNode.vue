@@ -90,7 +90,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ipcRenderer } from 'electron'
 
 let prevRightClickedObj = null
 let _dragEnterNodeId = -1
@@ -310,15 +309,9 @@ export default {
   created() {
     this.wNode = this.nodes
     this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
-    console.log(`${this.nodes.name} > created`)
-    // this.path = this.nodes.path
   },
-  mounted() {
-    console.log(`${this.nodes.name} > mounted`)
-  },
-  updated() {
-    console.log(`${this.nodes.name} > updated`)
-  },
+  mounted() {},
+  updated() {},
   methods: {
     emitCheckDuplicateName(name, index) {
       const result =
@@ -464,7 +457,6 @@ export default {
       this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
 
       // TODO: ipc call, window directory create
-      ipcRenderer.send('send-directory-create', this.wNode)
     },
     childNodeFilter() {
       this.$emit('emitChildNodeFilter', this.wNode.id)

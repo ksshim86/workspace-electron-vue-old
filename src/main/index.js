@@ -2,8 +2,6 @@ import { app, BrowserWindow, ipcMain, globalShortcut, shell } from 'electron' //
 import ipc from './tutorial/ipc' // eslint-disable-line
 import lowdb from './tutorial/lowdb' // eslint-disable-line
 
-// import '../renderer/store'
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -15,6 +13,8 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+
+app.commandLine.appendSwitch('inspect', '5858')
 
 const winURL =
   process.env.NODE_ENV === 'development'

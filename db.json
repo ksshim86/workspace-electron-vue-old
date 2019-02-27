@@ -1,5 +1,14 @@
 {
   "workspace": {
-    "path": "C:\\Workspace"
+    "path": "C:\\Workspace",
+    "wTreeView": [
+      {
+        "children": [],
+        "id": 10,
+        "name": "1",
+        "path": "C:\\Workspace\\1",
+        "type": "work"
+      }
+    ]
   }
 }

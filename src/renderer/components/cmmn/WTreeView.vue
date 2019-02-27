@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import { mapGetters, mapActions } from 'vuex'
 import WNode from './WNode'
 
@@ -116,6 +117,15 @@ export default {
         }
 
         this.sortWNode(node)
+
+        // TODO: 디렉토리, db에 저장을 어떤 방식으로 처리할지 고민 필요
+        ipcRenderer.send(
+          'send-directory-create',
+          {
+            wNode: this.wNodes[parentWNodeIndexsAndWNodeIndex[0]],
+            idx: parentWNodeIndexsAndWNodeIndex[0]
+          }
+        )
       }
     }
   },

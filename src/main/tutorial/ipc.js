@@ -17,10 +17,22 @@ ipcMain.on('send-workspace-path-save', (event) => {
 })
 
 ipcMain.on('send-directory-create', (event, arg) => {
-  console.log(arg)
+  const { wNode, idx } = arg
 
-  fs.mkdir(arg.path, { recursive: true }, (err) => {
+  // TODO: 디렉토리, db에 저장을 어떤 방식으로 처리할지 고민 필요
+  fs.mkdir(wNode.path, { recursive: true }, (err) => {
     if (err) throw err
+
+    if (wNode.type === 'work') {
+      lowdb.push('workspace.wTreeView', wNode)
+    } else {
+      lowdb.findPush(
+        'workspace.wTreeView',
+        'children',
+        idx,
+        wNode
+      )
+    }
   })
 })
 
