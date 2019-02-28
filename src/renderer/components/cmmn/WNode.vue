@@ -89,6 +89,7 @@
 </template>
 
 <script>
+// import { ipcRenderer } from 'electron'
 import { mapGetters, mapActions } from 'vuex'
 
 let prevRightClickedObj = null
@@ -453,10 +454,21 @@ export default {
       }
 
       this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
+      this.SET_EDITING_W_NODE_PATH(`${this.parentPath}${this.separator}${this.wNode.name}`)
       this.isEdit = false
       this.SET_EDITING_W_NODE(JSON.parse(JSON.stringify(initEditingWNode)))
 
       // TODO: ipc call, window directory create
+      // TODO: 디렉토리, db에 저장을 어떤 방식으로 처리할지 고민 필요
+      // this.$nextTick(() => {
+      //   ipcRenderer.send(
+      //     'send-directory-create',
+      //     {
+      //       wNode: this.wNode,
+      //       treeIndex: this.parentWNodeIndexsAndWNodeIndex
+      //     }
+      //   )
+      // })
     },
     childNodeFilter() {
       this.$emit('emitChildNodeFilter', this.wNode.id)
@@ -472,6 +484,7 @@ export default {
       'SET_DROP_W_NODE',
       'SET_EDITING_W_NODE',
       'SET_EDITING_W_NODE_NAME',
+      'SET_EDITING_W_NODE_PATH',
       'SET_EDITING_W_NODE_NAME_CHECK'
     ])
   }

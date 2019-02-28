@@ -69,6 +69,9 @@ const mutations = {
   SET_EDITING_W_NODE_NAME: (state, value) => {
     state.editingWNode.wNode.name = value
   },
+  SET_EDITING_W_NODE_PATH: (state, value) => {
+    state.editingWNode.wNode.path = value
+  },
   SET_EDITING_W_NODE_NAME_CHECK: (state, value) => {
     state.editingWNode.nameCheck = value
   }
@@ -92,6 +95,9 @@ const actions = {
   },
   SET_EDITING_W_NODE_NAME: ({ commit }, payload) => {
     commit('SET_EDITING_W_NODE_NAME', payload)
+  },
+  SET_EDITING_W_NODE_PATH: ({ commit }, payload) => {
+    commit('SET_EDITING_W_NODE_PATH', payload)
   },
   SET_EDITING_W_NODE_NAME_CHECK: ({ commit }, payload) => {
     commit('SET_EDITING_W_NODE_NAME_CHECK', payload)

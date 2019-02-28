@@ -110,7 +110,7 @@ export default {
       const { parentWNodeIndexsAndWNodeIndex } = oldVal
       const len = oldVal.parentWNodeIndexsAndWNodeIndex.length - 1
 
-      if (newVal.status === '' && oldVal.status !== '') {
+      if (newVal.status === '' && oldVal.status !== '' && oldVal.wNode.name.length) {
         for (let i = 0; i < len; i += 1) {
           const idx = parentWNodeIndexsAndWNodeIndex[i]
           node = node[idx].children
@@ -118,24 +118,30 @@ export default {
 
         this.sortWNode(node)
 
-        // TODO: 디렉토리, db에 저장을 어떤 방식으로 처리할지 고민 필요
         ipcRenderer.send(
           'send-directory-create',
           {
-            wNode: this.wNodes[parentWNodeIndexsAndWNodeIndex[0]],
-            idx: parentWNodeIndexsAndWNodeIndex[0]
+            wNode: oldVal.wNode,
+            treeIndex: oldVal.parentWNodeIndexsAndWNodeIndex
           }
         )
       }
     }
   },
-  beforeCreate() { },
+  beforeCreate() {},
   created() {
+    ipcRenderer.send('send-wTreeView')
     // this.wNodes = JSON.parse(JSON.stringify(this.nodes))
 
     // for (let i = 0; i < this.wNodes.length; i += 1) {
     //   this.initWNode(this.wNodes[i])
     // }
+  },
+  mounted() {
+    ipcRenderer.on('on-wTreeView', (event, arg) => {
+      this.wNodes = JSON.parse(JSON.stringify(arg.wTreeView))
+      // TODO: nextWNodeId 어떻게 관리할지 고민해야 됨
+    })
   },
   methods: {
     // children이 없는 node children 속성 추가
@@ -272,6 +278,7 @@ export default {
 
               node[index].name = editingName
               node[index].path = `${node[index].path}${editingName}`
+              this.SET_EDITING_W_NODE_PATH(`${node[index].path}`)
 
               if (duplicateIndex !== -1) node.splice(index, 1)
             } else {
@@ -424,7 +431,8 @@ export default {
     ...mapActions([
       'SET_NEXT_W_NODE_ID',
       'SET_SELECTED_W_NODE',
-      'SET_EDITING_W_NODE'
+      'SET_EDITING_W_NODE',
+      'SET_EDITING_W_NODE_PATH'
     ])
   }
 }
