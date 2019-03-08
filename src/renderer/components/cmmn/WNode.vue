@@ -310,9 +310,14 @@ export default {
   created() {
     this.wNode = this.nodes
     this.wNode.path = `${this.parentPath}${this.separator}${this.wNode.name}`
+    console.log(`created> ${this.parentPath}`)
   },
-  mounted() {},
-  updated() {},
+  mounted() {
+    console.log(`mounted> ${this.parentPath}`)
+  },
+  beforeUpdate() {
+    console.log(`beforeUpdate> ${this.parentPath}`)
+  },
   methods: {
     emitCheckDuplicateName(name, index) {
       const result =

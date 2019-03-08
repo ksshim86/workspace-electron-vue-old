@@ -1,5 +1,7 @@
+import { ipcRenderer } from 'electron'
+
 const state = {
-  nextWNodeId: 10,
+  nextWNodeId: 0,
   dragWNode: {
     wNode: {
       id: 0,
@@ -51,7 +53,10 @@ const getters = {
 }
 
 const mutations = {
-  SET_NEXT_W_NODE_ID(state) {
+  SET_NEXT_W_NODE_ID(state, value) {
+    state.nextWNodeId = value
+  },
+  INCREASE_NEXT_W_NODE_ID(state) {
     state.nextWNodeId += 1
   },
   SET_SELECTED_W_NODE: (state, value) => {
@@ -87,8 +92,11 @@ const actions = {
   SET_DROP_W_NODE: ({ commit }, payload) => {
     commit('SET_DROP_W_NODE', payload)
   },
-  SET_NEXT_W_NODE_ID: ({ commit }) => {
-    commit('SET_NEXT_W_NODE_ID')
+  SET_NEXT_W_NODE_ID: ({ commit }, payload) => {
+    commit('SET_NEXT_W_NODE_ID', payload)
+  },
+  INCREASE_NEXT_W_NODE_ID: ({ commit }) => {
+    commit('INCREASE_NEXT_W_NODE_ID')
   },
   SET_EDITING_W_NODE: ({ commit }, payload) => {
     commit('SET_EDITING_W_NODE', payload)
@@ -101,6 +109,22 @@ const actions = {
   },
   SET_EDITING_W_NODE_NAME_CHECK: ({ commit }, payload) => {
     commit('SET_EDITING_W_NODE_NAME_CHECK', payload)
+  },
+  IPC_CREATE_DIRECTORY: ({ commit }, payload) => {
+    const { wNode, treeIndex } = payload
+
+    ipcRenderer.send(
+      'send-create-directory',
+      {
+        wNode,
+        treeIndex
+      }
+    )
+    ipcRenderer.on('on-create-directory', (event, arg) => {
+      if (arg.result === 'success') {
+        commit('SET_NEXT_W_NODE_ID', arg.data.nextWNodeId)
+      }
+    })
   }
 }
 

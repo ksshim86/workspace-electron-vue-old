@@ -51,6 +51,7 @@ const push = (path, param, treeIndex) => {
       node.push(param)
     }
   }
+
   sortWNode(node)
 
   db.write()

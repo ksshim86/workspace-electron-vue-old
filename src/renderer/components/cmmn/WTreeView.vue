@@ -118,8 +118,15 @@ export default {
 
         this.sortWNode(node)
 
-        ipcRenderer.send(
-          'send-directory-create',
+        // ipcRenderer.send(
+        //   'send-directory-create',
+        //   {
+        //     wNode: oldVal.wNode,
+        //     treeIndex: oldVal.parentWNodeIndexsAndWNodeIndex
+        //   }
+        // )
+
+        this.IPC_CREATE_DIRECTORY(
           {
             wNode: oldVal.wNode,
             treeIndex: oldVal.parentWNodeIndexsAndWNodeIndex
@@ -128,9 +135,11 @@ export default {
       }
     }
   },
-  beforeCreate() {},
+  beforeCreate() {
+    console.log(`wTreeview beforeCreate : ${this.wNodes}`)
+  },
   created() {
-    ipcRenderer.send('send-wTreeView')
+    console.log(`wTreeview created : ${this.wNodes}`)
     // this.wNodes = JSON.parse(JSON.stringify(this.nodes))
 
     // for (let i = 0; i < this.wNodes.length; i += 1) {
@@ -138,10 +147,17 @@ export default {
     // }
   },
   mounted() {
+    ipcRenderer.send('send-wTreeView')
     ipcRenderer.on('on-wTreeView', (event, arg) => {
       this.wNodes = JSON.parse(JSON.stringify(arg.wTreeView))
       // TODO: nextWNodeId 어떻게 관리할지 고민해야 됨
+      this.SET_NEXT_W_NODE_ID(arg.nextWNodeId)
+      console.log('wTreeview mounted ipcRenderer')
     })
+    console.log(`wTreeview mounted : ${this.wNodes}`)
+  },
+  updated() {
+    console.log(`wTreeview updated : ${this.wNodes}`)
   },
   methods: {
     // children이 없는 node children 속성 추가
@@ -394,7 +410,7 @@ export default {
         }
 
         this.SET_EDITING_W_NODE(editingWNode)
-        this.SET_NEXT_W_NODE_ID()
+        // this.INCREASE_NEXT_W_NODE_ID()
       })
     },
     createWork(newNode = {}) {
@@ -420,7 +436,7 @@ export default {
         editingWNode.parentWNodeIndexsAndWNodeIndex.push(editingWNodeIndex)
 
         this.SET_EDITING_W_NODE(editingWNode)
-        this.SET_NEXT_W_NODE_ID()
+        // this.INCREASE_NEXT_W_NODE_ID()
       })
     },
     isCreateNewNode(type) {
@@ -429,10 +445,12 @@ export default {
       return items.includes(type)
     },
     ...mapActions([
+      'INCREASE_NEXT_W_NODE_ID',
       'SET_NEXT_W_NODE_ID',
       'SET_SELECTED_W_NODE',
       'SET_EDITING_W_NODE',
-      'SET_EDITING_W_NODE_PATH'
+      'SET_EDITING_W_NODE_PATH',
+      'IPC_CREATE_DIRECTORY'
     ])
   }
 }

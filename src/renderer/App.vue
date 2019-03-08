@@ -44,12 +44,13 @@ export default {
     }
   },
   mounted() {
-    ipcRenderer.on('workspace-path', (event, data) => {
-      if (data !== '') {
-        this.workspaceIsEmpty = false
-        this.SET_WORKSPACE_PATH(data)
-      }
-    })
+    const data = ipcRenderer.sendSync('sendSync-workspace-path')
+
+    if (data !== '') {
+      this.workspaceIsEmpty = false
+      this.SET_WORKSPACE_PATH(data)
+      console.log(`App.vue mounted : ${data}`)
+    }
   },
   methods: {
     ...mapGetters(['getWorkspaceIsEmpty']),
