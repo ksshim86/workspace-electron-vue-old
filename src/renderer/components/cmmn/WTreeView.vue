@@ -183,7 +183,8 @@ export default {
         dragWNodeTreeIndexes[dragLength - 2] ===
         dropWNodeTreeIndexes[dropLength - 2] &&
         dropWNodeTreeIndexes[dropLength - 1] >
-        dragWNodeTreeIndexes[dragLength - 1]
+        dragWNodeTreeIndexes[dragLength - 1] &&
+        dragLength === dropLength
       ) {
         dropWNodeTreeIndexes[dropLength - 1] =
           dropWNodeTreeIndexes[dropLength - 1] - 1
@@ -500,5 +501,14 @@ export default {
 
 .w-tree-view-node-list li {
   list-style: none;
+}
+
+/* 텍스트 드래그 방지 */
+.w-tree-view-node-list {
+   -ms-user-select: none;
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   user-select: none;
 }
 </style>

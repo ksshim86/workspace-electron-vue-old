@@ -95,6 +95,7 @@ import { mapGetters, mapActions } from 'vuex'
 let prevRightClickedObj = null
 let _dragEnterNodeId = -1
 let _dragEnterStartTime = null
+let _dragNodeId = -1
 
 export default {
   name: 'WNode',
@@ -344,6 +345,9 @@ export default {
       // document.body.appendChild(element)
       // event.dataTransfer.setDragImage(element, -17, -15)
 
+      this.isOpen = false
+      _dragNodeId = this.wNode.id
+
       this.SET_DRAG_W_NODE({
         wNode: JSON.parse(JSON.stringify(this.wNode)),
         parentWNodeId: this.parentWNodeIds[lastIndex],
@@ -354,13 +358,16 @@ export default {
       const delayTime = 500
       let _dragOverTime = null
 
+      console.log(`${_dragNodeId} : ${this.wNode.id}`)
+
       if (this.wNode.id === _dragEnterNodeId) {
         _dragOverTime = new Date().getTime()
 
         if (
           _dragOverTime - _dragEnterStartTime >= delayTime &&
           !this.isOpen &&
-          this.hasChildren
+          this.hasChildren &&
+          _dragNodeId !== this.wNode.id
         ) {
           this.isOpen = true
         }
