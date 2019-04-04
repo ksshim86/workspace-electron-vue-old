@@ -139,6 +139,7 @@ export default {
     console.log(`wTreeview beforeCreate : ${this.wNodes}`)
   },
   created() {
+    this.wNodes = []
     console.log(`wTreeview created : ${this.wNodes}`)
     // this.wNodes = JSON.parse(JSON.stringify(this.nodes))
 
@@ -149,9 +150,11 @@ export default {
   mounted() {
     ipcRenderer.send('send-wTreeView')
     ipcRenderer.on('on-wTreeView', (event, arg) => {
-      this.wNodes = JSON.parse(JSON.stringify(arg.wTreeView))
-      // TODO: nextWNodeId 어떻게 관리할지 고민해야 됨
-      this.SET_NEXT_W_NODE_ID(arg.nextWNodeId)
+      if (arg.wTreeView) {
+        this.wNodes = JSON.parse(JSON.stringify(arg.wTreeView))
+      }
+
+      this.SET_NEXT_W_NODE_ID(arg.nextWNodeId ? arg.nextWNodeId : 1)
       console.log('wTreeview mounted ipcRenderer')
     })
     console.log(`wTreeview mounted : ${this.wNodes}`)
